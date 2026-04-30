@@ -1,0 +1,483 @@
+/* Root Container */
+.tours-root {
+  padding: clamp(24px, 5vw, 48px) clamp(16px, 4vw, 32px);
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #f3f4f6;
+  min-height: 100vh;
+}
+
+/* Title */
+.tours-title {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  text-align: center;
+  margin-bottom: clamp(24px, 4vw, 40px);
+  font-weight: 700;
+  color: #f3f4f6;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  letter-spacing: -0.5px;
+}
+
+/* Responsive Grid */
+.tours-grid {
+  display: grid;
+  gap: clamp(16px, 3vw, 28px);
+  justify-items: center;
+  grid-template-columns: 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .tours-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .tours-grid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  }
+}
+
+/* Tour Card */
+.tour-card {
+  width: 100%;
+  max-width: 450px;
+  background: linear-gradient(145deg, #374151 0%, #2d3748 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.tour-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,158,11,0.2);
+  border-color: rgba(245,158,11,0.3);
+}
+
+/* Card Carousel */
+.card-carousel {
+  position: relative;
+  height: clamp(180px, 30vw, 240px);
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tour-card:hover .card-image {
+  transform: scale(1.08);
+}
+
+/* Carousel Controls */
+.card-prev,
+.card-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(32px, 6vw, 38px);
+  height: clamp(32px, 6vw, 38px);
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  color: #f3f4f6;
+  font-size: clamp(16px, 3vw, 20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.9;
+}
+
+.card-prev:hover,
+.card-next:hover {
+  background: rgba(245,158,11,0.9);
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.card-prev:active,
+.card-next:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.card-prev { left: clamp(8px, 2vw, 12px); }
+.card-next { right: clamp(8px, 2vw, 12px); }
+
+/* Carousel Dots */
+.card-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: clamp(6px, 1.5vw, 10px);
+  z-index: 2;
+}
+
+.card-dot {
+  width: clamp(8px, 2vw, 11px);
+  height: clamp(8px, 2vw, 11px);
+  border-radius: 50%;
+  background: rgba(243,244,246,0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.card-dot:hover {
+  background: rgba(243,244,246,0.8);
+  transform: scale(1.15);
+}
+
+.card-dot.active {
+  background: #f59e0b;
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(245,158,11,0.6);
+}
+
+/* Card Body */
+.card-body {
+  padding: clamp(14px, 3vw, 20px) clamp(16px, 3vw, 20px);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: clamp(8px, 2vw, 12px);
+}
+
+.card-title {
+  margin: 0;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  line-height: 1.3;
+  font-weight: 700;
+  color: #f3f4f6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-short {
+  margin: 0;
+  font-size: clamp(13px, 2vw, 14px);
+  color: #d1d5db;
+  line-height: 1.5;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-price {
+  font-size: clamp(13px, 2.5vw, 15px);
+  font-weight: 700;
+  color: #fbbf24;
+  margin-top: 4px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(8px, 2vw, 12px);
+  margin-top: clamp(8px, 2vw, 14px);
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.card-open,
+.card-book {
+  border: none;
+  color: #fff;
+  font-size: clamp(12px, 2vw, 14px);
+  padding: clamp(8px, 2vw, 10px) clamp(14px, 3vw, 18px);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+}
+
+.card-open { 
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.card-open:hover { 
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245,158,11,0.4);
+}
+
+.card-open:active {
+  transform: translateY(0);
+}
+
+.card-book { 
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.card-book:hover { 
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+}
+
+.card-book:active {
+  transform: translateY(0);
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: clamp(16px, 4vw, 32px);
+  animation: fadeIn 0.3s ease;
+  overflow-y: auto;
+}
+
+.modal-inner {
+  background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+  border-radius: 20px;
+  width: min(900px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: clamp(20px, 4vw, 36px) clamp(20px, 4vw, 40px);
+  position: relative;
+  color: #f3f4f6;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  animation: slideUp 0.3s ease;
+}
+
+.modal-close {
+  position: absolute;
+  top: clamp(12px, 3vw, 18px);
+  right: clamp(12px, 3vw, 20px);
+  border: none;
+  background: rgba(248,113,113,0.1);
+  font-size: clamp(20px, 4vw, 26px);
+  cursor: pointer;
+  color: #f87171;
+  transition: all 0.2s ease;
+  width: clamp(32px, 6vw, 40px);
+  height: clamp(32px, 6vw, 40px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover { 
+  color: #fff;
+  background: rgba(248,113,113,0.9);
+  transform: rotate(90deg);
+}
+
+/* Tour Details */
+.tour-details h2 {
+  margin: 0 0 clamp(8px, 2vw, 12px) 0;
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
+  font-weight: 700;
+  color: #f3f4f6;
+  line-height: 1.2;
+}
+
+.tour-details h3 {
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
+  margin: clamp(16px, 3vw, 24px) 0 clamp(8px, 2vw, 12px) 0;
+  color: #fbbf24;
+}
+
+.tour-details h4 {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  margin: clamp(12px, 2vw, 16px) 0 clamp(6px, 1.5vw, 10px) 0;
+  color: #60a5fa;
+}
+
+.details-short { 
+  color: #d1d5db; 
+  margin: 0 0 clamp(16px, 3vw, 24px) 0; 
+  font-size: clamp(14px, 2.5vw, 16px);
+  line-height: 1.6;
+}
+
+.detail-day { 
+  margin-bottom: clamp(12px, 2.5vw, 18px);
+  font-size: clamp(13px, 2vw, 14px);
+  line-height: 1.6;
+}
+
+.inc-exc {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: clamp(16px, 3vw, 32px);
+  margin-top: clamp(16px, 3vw, 24px);
+}
+
+.inc-exc ul {
+  margin: clamp(6px, 1.5vw, 10px) 0 clamp(12px, 2vw, 18px) clamp(16px, 3vw, 20px);
+  font-size: clamp(12px, 2vw, 13px);
+  line-height: 1.6;
+  color: #e5e7eb;
+  padding-left: 0;
+}
+
+.inc-exc li {
+  margin-bottom: clamp(4px, 1vw, 6px);
+}
+
+/* Price Table */
+.price-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: clamp(16px, 3vw, 24px) 0;
+  font-size: clamp(12px, 2vw, 13px);
+  overflow-x: auto;
+  display: block;
+}
+
+.price-table thead,
+.price-table tbody {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.price-table th,
+.price-table td {
+  border: 1px solid #4b5563;
+  padding: clamp(8px, 2vw, 12px) clamp(6px, 1.5vw, 10px);
+  text-align: center;
+  color: #f3f4f6;
+}
+
+.price-table th { 
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  font-weight: 700;
+  font-size: clamp(12px, 2vw, 14px);
+}
+
+.price-table .ar { 
+  color: #9ca3af; 
+  font-size: clamp(11px, 1.8vw, 12px);
+  letter-spacing: 0.3px;
+}
+
+/* Details Footer */
+.details-footer {
+  margin-top: clamp(20px, 4vw, 32px);
+  text-align: center;
+  font-size: clamp(13px, 2vw, 14px);
+  color: #d1d5db;
+  padding-top: clamp(16px, 3vw, 24px);
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.details-footer small {
+  display: block;
+  margin-top: clamp(6px, 1.5vw, 10px);
+  color: #9ca3af;
+  font-size: clamp(11px, 1.8vw, 12px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+  }
+  to { 
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .card-prev,
+  .card-next {
+    opacity: 1;
+    background: rgba(0,0,0,0.8);
+  }
+  
+  .tour-card:active {
+    transform: scale(0.98);
+  }
+  
+  .card-open:active,
+  .card-book:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Scrollbar Styling */
+.modal-inner::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-inner::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+
+.modal-inner::-webkit-scrollbar-thumb {
+  background: rgba(245,158,11,0.5);
+  border-radius: 10px;
+}
+
+.modal-inner::-webkit-scrollbar-thumb:hover {
+  background: rgba(245,158,11,0.7);
+}
+
+/* Print Styles */
+@media print {
+  .tours-root {
+    background: white;
+    color: black;
+  }
+  
+  .tour-card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  
+  .card-prev,
+  .card-next,
+  .card-dots {
+    display: none;
+  }
+}

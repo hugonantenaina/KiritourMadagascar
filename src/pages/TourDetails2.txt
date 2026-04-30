@@ -1,0 +1,438 @@
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { tours, UUID_TO_TOUR_ID } from "./Tours";
+
+if (typeof document !== "undefined" && !document.getElementById("kt-td-fonts")) {
+  const l = document.createElement("link");
+  l.id = "kt-td-fonts"; l.rel = "stylesheet";
+  l.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap";
+  document.head.appendChild(l);
+}
+
+const serif = "'Playfair Display', serif";
+const sans  = "'DM Sans', sans-serif";
+const WA    = "261336640777";
+const wa    = (msg) => window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg || "Hello KiriTour!")}`, "_blank");
+
+function useOnceVisible(threshold = 0.08) {
+  const ref = useRef(null);
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVis(true); obs.disconnect(); }
+    }, { threshold });
+    obs.observe(el); return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, vis];
+}
+
+function Reveal({ children, delay = 0, y = 32, className = "" }) {
+  const [ref, vis] = useOnceVisible();
+  return (
+    <div ref={ref} className={className} style={{
+      opacity: vis ? 1 : 0,
+      transform: vis ? "translateY(0)" : `translateY(${y}px)`,
+      transition: `opacity 0.75s ease ${delay}s, transform 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+const Ico = ({ n, s = 18, c = "currentColor" }) => {
+  const p = { width: s, height: s, viewBox: "0 0 24 24", fill: "none", stroke: c, strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", style: { display: "inline-block", flexShrink: 0 } };
+  const d = {
+    back:    <svg {...p}><polyline points="15 18 9 12 15 6"/></svg>,
+    star:    <svg {...p} fill={c} stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+    clock:   <svg {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+    check:   <svg {...p}><polyline points="20 6 9 17 4 12"/></svg>,
+    x:       <svg {...p}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+    wa:      <svg {...p} fill={c} stroke="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a9.87 9.87 0 00-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>,
+    map:     <svg {...p}><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>,
+    share:   <svg {...p}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
+    tag:     <svg {...p}><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
+    users:   <svg {...p}><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>,
+    chevron: <svg {...p}><polyline points="9 18 15 12 9 6"/></svg>,
+  };
+  return d[n] || null;
+};
+
+export default function TourDetails() {
+  const { id: uuid } = useParams();
+  const navigate     = useNavigate();
+  const [imgIdx,  setImgIdx]  = useState(0);
+  const [dayOpen, setDayOpen] = useState(null);
+  const [copied,  setCopied]  = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setTimeout(() => setMounted(true), 60); window.scrollTo(0, 0); }, []);
+
+  const tourId = UUID_TO_TOUR_ID[uuid];
+  const tour   = tours.find((t) => t.id === tourId);
+
+  if (!tour) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-4"
+      style={{ background: "linear-gradient(160deg,#052e16,#14532d)", fontFamily: sans }}>
+      <p className="text-white/50 text-lg">Tour not found.</p>
+      <button onClick={() => navigate("/tours")}
+        className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-emerald-900 text-sm hover:scale-105 transition-all"
+        style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)" }}>
+        <Ico n="back" s={16} c="#14532d" /> Back to Tours
+      </button>
+    </div>
+  );
+
+  const firstPrice = tour.pricing?.[0]?.price || tour.pricing?.[0]?.range || "";
+
+  const handleShare = () => {
+    navigator.clipboard?.writeText(window.location.href).then(() => {
+      setCopied(true); setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="min-h-screen" style={{ background: "#f0f4f0", fontFamily: sans }}>
+
+      {/* ══ CINEMATIC HERO ══════════════════════════════════════════ */}
+      <div className="relative w-full overflow-hidden" style={{ height: "100svh", maxHeight: 720, minHeight: 480 }}>
+        {tour.images.map((img, i) => (
+          <div key={i} className="absolute inset-0 transition-opacity duration-1000" style={{ opacity: imgIdx === i ? 1 : 0 }}>
+            <img src={img} alt="" className="w-full h-full object-cover"
+              style={{ animation: imgIdx === i ? "td-kb 10s ease-out both" : "none" }}
+              onError={(e) => { e.target.src = "https://i.ibb.co/5xXLDSZQ/20250729-173834.jpg"; }} />
+          </div>
+        ))}
+
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(2,13,6,.55) 0%,rgba(2,13,6,.1) 35%,rgba(2,13,6,.15) 55%,rgba(2,13,6,.94) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center,transparent 40%,rgba(2,13,6,.4) 100%)" }} />
+
+        {/* Top bar */}
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 md:px-8 py-5 z-20"
+          style={{ opacity: mounted ? 1 : 0, transform: mounted ? "translateY(0)" : "translateY(-20px)", transition: "opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s" }}>
+          <button onClick={() => navigate("/tours")}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm transition-all hover:scale-105 active:scale-95"
+            style={{ background: "rgba(255,255,255,.12)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,.2)", color: "white", fontFamily: sans }}>
+            <Ico n="back" s={15} c="white" /> All Tours
+          </button>
+          <div className="flex items-center gap-2">
+            {tour.images.length > 1 && (
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-full" style={{ background: "rgba(0,0,0,.3)", backdropFilter: "blur(8px)" }}>
+                {tour.images.map((_, i) => (
+                  <button key={i} onClick={() => setImgIdx(i)} className="rounded-full transition-all duration-300"
+                    style={{ width: imgIdx === i ? 20 : 6, height: 6, background: imgIdx === i ? "#facc15" : "rgba(255,255,255,.4)" }} />
+                ))}
+              </div>
+            )}
+            <button onClick={handleShare}
+              className="flex items-center gap-2 px-3 py-2.5 rounded-full font-semibold text-xs transition-all hover:scale-105"
+              style={{ background: copied ? "rgba(250,204,21,.9)" : "rgba(255,255,255,.12)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,.2)", color: copied ? "#14532d" : "white", fontFamily: sans }}>
+              <Ico n="share" s={14} c={copied ? "#14532d" : "white"} />
+              {copied ? "Copied!" : "Share"}
+            </button>
+          </div>
+        </div>
+
+        {/* Hero bottom */}
+        <div className="absolute bottom-0 left-0 right-0 px-4 md:px-10 pb-8 md:pb-12 z-10">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-2 flex-wrap mb-4"
+              style={{ opacity: mounted ? 1 : 0, transform: mounted ? "translateY(0)" : "translateY(20px)", transition: "opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s" }}>
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black"
+                style={{ background: "#facc15", color: "#14532d", fontFamily: sans }}>
+                <Ico n="clock" s={11} c="#14532d" /> {tour.duration}
+              </span>
+              <span className="px-3 py-1.5 rounded-full text-[11px] font-black text-white"
+                style={{ background: tour.tagColor, fontFamily: sans }}>{tour.tag}</span>
+              <span className="flex items-center gap-0.5 px-3 py-1.5 rounded-full"
+                style={{ background: "rgba(255,255,255,.12)", backdropFilter: "blur(8px)" }}>
+                {[...Array(5)].map((_, i) => <Ico key={i} n="star" s={11} c={i < tour.rating ? "#fbbf24" : "rgba(255,255,255,.25)"} />)}
+                <span className="text-white/60 text-[10px] ml-1" style={{ fontFamily: sans }}>{tour.rating}.0</span>
+              </span>
+            </div>
+            <h1 className="text-white font-black leading-none mb-2"
+              style={{ fontFamily: serif, fontSize: "clamp(2rem,5.5vw,4rem)", letterSpacing: "-.03em", textShadow: "0 4px 30px rgba(0,0,0,.6)",
+                opacity: mounted ? 1 : 0, transform: mounted ? "translateY(0)" : "translateY(24px)", transition: "opacity 0.8s ease 0.3s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s" }}>
+              {tour.title}
+            </h1>
+            <p className="text-white/60 text-sm md:text-base italic"
+              style={{ fontFamily: sans, opacity: mounted ? 1 : 0, transform: mounted ? "translateY(0)" : "translateY(16px)", transition: "opacity 0.7s ease 0.45s, transform 0.7s ease 0.45s" }}>
+              {tour.subtitle}
+            </p>
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <div className="absolute bottom-6 right-6 hidden md:flex flex-col items-center gap-2"
+          style={{ opacity: mounted ? 0.5 : 0, transition: "opacity 1s ease 1.2s" }}>
+          <span className="text-white text-[9px] tracking-[.3em] uppercase" style={{ fontFamily: sans, writingMode: "vertical-rl" }}>scroll</span>
+          <div className="w-px h-10 overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,.2)" }}>
+            <div className="w-full h-1/2 rounded-full bg-yellow-400" style={{ animation: "td-scroll 2s ease-in-out infinite" }} />
+          </div>
+        </div>
+      </div>
+
+      {/* ══ MOBILE STICKY BOOKING BAR ══ */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden px-4 py-3"
+        style={{ background: "rgba(5,46,22,.97)", backdropFilter: "blur(16px)", borderTop: "1px solid rgba(250,204,21,.2)" }}>
+        <div className="flex items-center gap-3 max-w-lg mx-auto">
+          <div className="flex-1">
+            <p className="text-white/40 text-[9px] uppercase tracking-widest" style={{ fontFamily: sans }}>From</p>
+            <p className="text-yellow-400 font-black text-xl leading-none" style={{ fontFamily: serif }}>{firstPrice}</p>
+          </div>
+          <button onClick={() => wa(`Hello KiriTour! I'd like to book: ${tour.title} (${tour.duration})`)}
+            className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-black text-emerald-900 text-sm hover:scale-105 active:scale-95 transition-all"
+            style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", boxShadow: "0 4px 20px rgba(250,204,21,.4)", fontFamily: sans }}>
+            <Ico n="wa" s={16} c="#14532d" /> Book Now
+          </button>
+        </div>
+      </div>
+
+      {/* ══ MAIN CONTENT ════════════════════════════════════════════ */}
+      <div className="max-w-6xl mx-auto px-4 py-10 md:py-14 pb-28 lg:pb-14">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+
+          {/* LEFT — 8 cols */}
+          <div className="lg:col-span-8 space-y-6">
+
+            {/* About */}
+            <Reveal delay={0}>
+              <div className="rounded-3xl p-6 md:p-8 relative overflow-hidden"
+                style={{ background: "white", border: "1px solid rgba(0,0,0,.06)", boxShadow: "0 4px 24px rgba(0,0,0,.06)" }}>
+                <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl"
+                  style={{ background: `linear-gradient(90deg,${tour.tagColor},#facc15)` }} />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${tour.tagColor}20` }}>
+                    <Ico n="map" s={18} c={tour.tagColor} />
+                  </div>
+                  <h2 className="font-black text-slate-900 text-xl" style={{ fontFamily: serif }}>About this tour</h2>
+                </div>
+                <p className="text-slate-600 text-sm md:text-base leading-relaxed" style={{ fontFamily: sans }}>{tour.desc}</p>
+                <div className="grid grid-cols-3 gap-3 mt-6 pt-5 border-t border-slate-50">
+                  {[
+                    { label: "Duration", val: tour.duration, icon: "clock" },
+                    { label: "Category", val: tour.tag,      icon: "tag"   },
+                    { label: "Rating",   val: `${tour.rating}.0★`, icon: "star" },
+                  ].map((stat, i) => (
+                    <div key={i} className="text-center p-3 rounded-2xl" style={{ background: "#f8faf8" }}>
+                      <div className="flex justify-center mb-1.5"><Ico n={stat.icon} s={16} c="#065f46" /></div>
+                      <p className="font-black text-slate-800 text-sm leading-tight" style={{ fontFamily: serif }}>{stat.val}</p>
+                      <p className="text-slate-400 text-[10px] mt-0.5 uppercase tracking-wide" style={{ fontFamily: sans }}>{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Itinerary accordion */}
+            {tour.itinerary?.length > 0 && (
+              <Reveal delay={0.05}>
+                <div className="rounded-3xl overflow-hidden"
+                  style={{ background: "white", border: "1px solid rgba(0,0,0,.06)", boxShadow: "0 4px 24px rgba(0,0,0,.06)" }}>
+                  <div className="px-6 md:px-8 py-5 flex items-center gap-3"
+                    style={{ background: "linear-gradient(135deg,#052e16,#14532d)", borderBottom: "1px solid rgba(250,204,21,.15)" }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "rgba(250,204,21,.15)" }}>
+                      <Ico n="map" s={17} c="#facc15" />
+                    </div>
+                    <div>
+                      <h2 className="font-black text-white text-lg leading-none" style={{ fontFamily: serif }}>Day-by-Day Itinerary</h2>
+                      <p className="text-white/40 text-xs mt-0.5" style={{ fontFamily: sans }}>{tour.itinerary.length} days · Tap to expand</p>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-slate-50">
+                    {tour.itinerary.map((d, i) => {
+                      const isOpen = dayOpen === i;
+                      return (
+                        <div key={d.day}>
+                          <button onClick={() => setDayOpen(isOpen ? null : i)}
+                            className="w-full flex items-center gap-4 px-5 md:px-8 py-4 hover:bg-slate-50/80 transition-all text-left">
+                            <div className="w-12 h-12 rounded-2xl flex-shrink-0 flex flex-col items-center justify-center transition-all duration-300"
+                              style={{ background: isOpen ? "linear-gradient(135deg,#facc15,#f59e0b)" : "#f0fdf4", boxShadow: isOpen ? "0 4px 16px rgba(250,204,21,.4)" : "none" }}>
+                              <span className="font-black text-[9px] uppercase tracking-wide leading-none" style={{ fontFamily: sans, color: isOpen ? "#14532d" : "#4ade80" }}>Day</span>
+                              <span className="font-black text-xl leading-none" style={{ fontFamily: serif, color: isOpen ? "#14532d" : "#065f46" }}>{d.day}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-black text-slate-800 text-sm leading-tight" style={{ fontFamily: serif }}>{d.loc}</p>
+                              {!isOpen && <p className="text-slate-400 text-xs mt-0.5 truncate" style={{ fontFamily: sans }}>{d.act}</p>}
+                            </div>
+                            <div className="flex-shrink-0 transition-transform duration-300" style={{ transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }}>
+                              <Ico n="chevron" s={16} c={isOpen ? "#ca8a04" : "#94a3b8"} />
+                            </div>
+                          </button>
+                          <div style={{ maxHeight: isOpen ? 200 : 0, overflow: "hidden", transition: "max-height 0.4s cubic-bezier(0.16,1,0.3,1)" }}>
+                            <div className="px-5 md:px-8 pb-4" style={{ paddingLeft: "calc(1.25rem + 48px + 1rem)" }}>
+                              <div className="rounded-2xl p-4" style={{ background: "#f8faf8", borderLeft: "3px solid #facc15" }}>
+                                <p className="text-slate-600 text-sm leading-relaxed" style={{ fontFamily: sans }}>{d.act}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </Reveal>
+            )}
+
+            {/* Inclusions / Exclusions */}
+            {(tour.inclusions || tour.exclusions) && (
+              <Reveal delay={0.1}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {tour.inclusions && (
+                    <div className="rounded-3xl p-6"
+                      style={{ background: "linear-gradient(135deg,#f0fdf4,#dcfce7)", border: "1.5px solid #bbf7d0", boxShadow: "0 4px 20px rgba(74,222,128,.1)" }}>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "#4ade8030" }}>
+                          <Ico n="check" s={15} c="#16a34a" />
+                        </div>
+                        <h3 className="font-black text-emerald-800 text-base" style={{ fontFamily: serif }}>Included</h3>
+                      </div>
+                      <ul className="space-y-2.5">
+                        {tour.inclusions.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2.5">
+                            <span className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5" style={{ background: "#4ade8030" }}>
+                              <Ico n="check" s={10} c="#16a34a" />
+                            </span>
+                            <span className="text-emerald-800 text-xs leading-snug" style={{ fontFamily: sans }}>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {tour.exclusions && (
+                    <div className="rounded-3xl p-6"
+                      style={{ background: "linear-gradient(135deg,#fafafa,#f1f5f9)", border: "1.5px solid #e2e8f0" }}>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "#fecaca50" }}>
+                          <Ico n="x" s={15} c="#dc2626" />
+                        </div>
+                        <h3 className="font-black text-slate-700 text-base" style={{ fontFamily: serif }}>Not Included</h3>
+                      </div>
+                      <ul className="space-y-2.5">
+                        {tour.exclusions.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2.5">
+                            <span className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5" style={{ background: "#fecaca40" }}>
+                              <Ico n="x" s={10} c="#dc2626" />
+                            </span>
+                            <span className="text-slate-500 text-xs leading-snug" style={{ fontFamily: sans }}>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </Reveal>
+            )}
+
+            {/* How to book */}
+            <Reveal delay={0.12}>
+              <div className="rounded-3xl p-6 md:p-8"
+                style={{ background: "linear-gradient(135deg,#052e16,#0f4c27)", border: "1px solid rgba(250,204,21,.15)" }}>
+                <h3 className="font-black text-white text-xl mb-6" style={{ fontFamily: serif }}>How to book</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {[
+                    { step: "01", title: "Contact us",     desc: "Send your dates & group size via WhatsApp — we reply within 2h.", icon: "wa"    },
+                    { step: "02", title: "Get your quote", desc: "We send a detailed itinerary and transparent price breakdown.",    icon: "map"   },
+                    { step: "03", title: "Travel & enjoy", desc: "We handle everything — you arrive and explore Madagascar.",        icon: "users" },
+                  ].map((s, i) => (
+                    <div key={i} className="p-4 rounded-2xl" style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.08)" }}>
+                      <p className="font-black text-4xl leading-none mb-2 opacity-20" style={{ fontFamily: serif, color: "#facc15" }}>{s.step}</p>
+                      <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3" style={{ background: "rgba(250,204,21,.15)" }}>
+                        <Ico n={s.icon} s={15} c="#facc15" />
+                      </div>
+                      <p className="font-bold text-white text-sm mb-1" style={{ fontFamily: serif }}>{s.title}</p>
+                      <p className="text-white/45 text-xs leading-relaxed" style={{ fontFamily: sans }}>{s.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* RIGHT sticky sidebar — 4 cols, desktop only */}
+          <div className="lg:col-span-4 hidden lg:block">
+            <div className="sticky top-6 space-y-4">
+
+              {/* Pricing */}
+              <Reveal delay={0.15}>
+                <div className="rounded-3xl overflow-hidden shadow-xl" style={{ border: "1px solid rgba(0,0,0,.08)" }}>
+                  <div className="px-6 py-5 relative overflow-hidden"
+                    style={{ background: "linear-gradient(135deg,#052e16,#0f766e)" }}>
+                    <div className="absolute inset-0 opacity-10"
+                      style={{ backgroundImage: "radial-gradient(circle at 80% 20%,white 0%,transparent 50%)" }} />
+                    <p className="text-emerald-300/60 text-[10px] font-bold tracking-[.3em] uppercase mb-1 relative z-10" style={{ fontFamily: sans }}>Starting from</p>
+                    <p className="text-yellow-400 font-black relative z-10" style={{ fontFamily: serif, fontSize: "2.4rem", lineHeight: 1 }}>{firstPrice}</p>
+                    <p className="text-emerald-200/40 text-xs mt-1 relative z-10" style={{ fontFamily: sans }}>per person · varies by group size</p>
+                  </div>
+                  <div className="p-4 bg-white">
+                    <p className="text-slate-400 text-[10px] font-bold tracking-widest uppercase mb-3" style={{ fontFamily: sans }}>All options</p>
+                    <div className="space-y-1.5">
+                      {tour.pricing.map((row, i) => {
+                        const isNote = !row.price && !row.range;
+                        return isNote ? (
+                          <p key={i} className="text-slate-300 text-[10px] text-center pt-2" style={{ fontFamily: sans }}>{row.pkg}</p>
+                        ) : (
+                          <div key={i} className="flex items-center justify-between gap-2 p-2.5 rounded-xl"
+                            style={{ background: i === 0 ? "#f0fdf4" : "#fafafa", border: `1px solid ${i === 0 ? "#bbf7d0" : "#f1f5f9"}` }}>
+                            <span className="text-slate-600 text-xs leading-snug flex-1" style={{ fontFamily: sans }}>{row.pax || row.pkg}</span>
+                            <span className="font-black text-emerald-700 text-sm flex-shrink-0" style={{ fontFamily: serif }}>{row.price || row.range}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="px-4 pb-5 bg-white">
+                    <button onClick={() => wa(`Hello KiriTour! I'd like to book: ${tour.title} (${tour.duration})`)}
+                      className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-black text-emerald-900 text-base hover:scale-105 active:scale-95 transition-all"
+                      style={{ background: "linear-gradient(135deg,#facc15,#fbbf24,#f59e0b)", boxShadow: "0 6px 28px rgba(250,204,21,.45)", fontFamily: sans }}>
+                      <Ico n="wa" s={18} c="#14532d" /> Book via WhatsApp
+                    </button>
+                    <p className="text-center text-slate-400 text-[10px] mt-2" style={{ fontFamily: sans }}>We reply within 2h · Custom itineraries available</p>
+                  </div>
+                </div>
+              </Reveal>
+
+              {/* Share */}
+              <Reveal delay={0.2}>
+                <button onClick={handleShare}
+                  className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-95"
+                  style={{ background: copied ? "#f0fdf4" : "white", border: `1.5px solid ${copied ? "#86efac" : "#e2e8f0"}`, boxShadow: "0 2px 12px rgba(0,0,0,.04)" }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: copied ? "#dcfce7" : "#f8fafc" }}>
+                    <Ico n="share" s={16} c={copied ? "#16a34a" : "#94a3b8"} />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-bold text-sm text-slate-700" style={{ fontFamily: sans }}>{copied ? "Link copied!" : "Share this tour"}</p>
+                    <p className="text-slate-400 text-[10px]" style={{ fontFamily: sans }}>Unique UUID link · Share anywhere</p>
+                  </div>
+                </button>
+              </Reveal>
+
+              {/* Help */}
+              <Reveal delay={0.22}>
+                <div className="rounded-2xl p-4" style={{ background: "white", border: "1px solid #f1f5f9" }}>
+                  <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-3" style={{ fontFamily: sans }}>Need help choosing?</p>
+                  <button onClick={() => wa("Hello! I need help choosing the right tour for me.")}
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-emerald-700 text-sm hover:bg-emerald-50 transition-all"
+                    style={{ fontFamily: sans, border: "1.5px solid #bbf7d0" }}>
+                    <Ico n="wa" s={16} c="#16a34a" /> Chat with our team
+                  </button>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes td-kb {
+          from { transform: scale(1.07); }
+          to   { transform: scale(1); }
+        }
+        @keyframes td-scroll {
+          0%   { transform: translateY(-100%); }
+          100% { transform: translateY(290%); }
+        }
+      `}</style>
+    </div>
+  );
+}

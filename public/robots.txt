@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kiritour-madagascar.github.io/KiritourMadagascar/sitemap.xml
