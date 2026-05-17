@@ -4,7 +4,7 @@ import { auth, signOut, onAuthStateChanged } from "../../firebase/firebaseConfig
 import {
   FaHome, FaWhatsapp, FaSignOutAlt, FaSignInAlt,
   FaUserPlus, FaTimes, FaCompass, FaImage,
-  FaMapMarkedAlt, FaHotel, FaEnvelope,
+  FaMapMarkedAlt, FaHotel, FaEnvelope, FaQuestionCircle,
 } from "react-icons/fa";
 
 /* ════════════════════════════════════════════════════════════
@@ -122,7 +122,7 @@ const Header = () => {
               <div className="absolute inset-0 rounded-full bg-yellow-400 transition-shadow duration-300 group-hover:shadow-[0_0_22px_rgba(250,204,21,.7)]"
                 style={{ boxShadow: "0 0 12px rgba(250,204,21,.4)" }} />
               <div className="absolute inset-[3px] rounded-full bg-green-900 overflow-hidden">
-                <img src="/KiritourMadagascar/favicon-192.png" alt="KiriTour" className="w-full h-full object-cover scale-150" />
+                <img src="/favicon-192.png" alt="KiriTour" className="w-full h-full object-cover scale-150" />
               </div>
               <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-green-900"
                 style={{ animation: "hdrPing 2.4s ease-in-out infinite" }} />
@@ -162,6 +162,9 @@ const Header = () => {
             {/* Contact page link */}
             <Link to="/contact" className={lnkCls("/contact")}>
               <FaEnvelope size={11} className="opacity-60 flex-shrink-0" /> Contact <Underline path="/contact" />
+            </Link>
+            <Link to="/faq" className={lnkCls("/faq")}>
+              <FaQuestionCircle size={11} className="opacity-60 flex-shrink-0" /> FAQ <Underline path="/faq" />
             </Link>
           </nav>
 
@@ -264,10 +267,11 @@ const Header = () => {
         {/* Nav */}
         <nav className="flex flex-col px-3 gap-0.5 flex-1 overflow-y-auto py-1">
           {[
-            { to: "/home",    icon: <FaHome />,     label: "Home"    },
-            { to: "/tours",   icon: <FaCompass />,  label: "Tours"   },
-            { to: "/about",   icon: <FaImage />,    label: "Gallery" },
-            { to: "/contact", icon: <FaEnvelope />, label: "Contact" },
+            { to: "/home",    icon: <FaHome />,           label: "Home"    },
+            { to: "/tours",   icon: <FaCompass />,        label: "Tours"   },
+            { to: "/about",   icon: <FaImage />,          label: "Gallery" },
+            { to: "/contact", icon: <FaEnvelope />,       label: "Contact" },
+            { to: "/faq",     icon: <FaQuestionCircle />, label: "FAQ"     },
           ].map((item) => (
             <Link key={item.to} to={item.to} onClick={close}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all

@@ -69,7 +69,7 @@ export default function LoadingScreen({ onComplete }) {
     }}
   >
     <img
-      src="/KiritourMadagascar/favicon-192.png"
+      src="/favicon-192.png"
       alt="Kiritour Logo"
       className="w-full h-full object-cover scale-150"
     />

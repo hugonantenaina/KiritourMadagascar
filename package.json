@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://kiritour-madagascar.github.io/KiritourMadagascar",
+  "homepage": "https://kiritourmadagascar.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

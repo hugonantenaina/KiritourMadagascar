@@ -118,10 +118,10 @@ function ScanLine({ delay }) {
 
 /* ─── DATA ─────────────────────────────────────────────────────── */
 const slides = [
-  { img: "https://i.ibb.co/5xXLDSZQ/20250729-173834.jpg",      label: "Tsingy de Bemaraha",    sub: "UNESCO World Heritage Site" },
-  { img: "https://i.ibb.co/C5CXsY8M/IMG-20251030-WA0106.jpg",  label: "Kirindy Forest Reserve", sub: "Home of the Elusive Fossa" },
-  { img: "https://i.ibb.co/YBDp5cM5/20250817-102639.jpg",       label: "Avenue of the Baobabs",  sub: "Madagascar's Most Iconic Landscape" },
-];
+  { img: "https://i.ibb.co/ksx7M9G2/IMG-20260224-WA0019.jpg",      label: "Avenue of the Baobabs",  sub: "Madagascar's Most Iconic Landscape" },
+  { img: "https://i.ibb.co/YBDp5cM5/20250817-102639.jpg",      label: "Tsingy de Bemaraha",    sub: "UNESCO World Heritage Site" },
+  { img: "https://i.ibb.co/4ZMwFVFh/IMG-20251030-WA0008.jpg",  label: "Kirindy Forest Reserve", sub: "Home of the Elusive Fossa" },
+  ];
 
 const gallery = [
   "https://i.ibb.co/sdZVvf9S/sakorkata1.jpg",
@@ -168,7 +168,7 @@ const reviews = [
    HERO — CINEMATIC CAPCUT TEXT REVEAL
    - Chaque lettre monte depuis le bas (clip overflow:hidden)
    - 3 lignes : "Wild." / "Rare." / "Unforgettable."
-   - ScanLine dorée avant chaque ligne
+   - ScanLine dorée avant chaque lignes
    - Animation ONE-SHOT : se rejoue uniquement sur refresh/actualiser
 ═══════════════════════════════════════════════════════════════════ */
 function Hero() {
@@ -485,7 +485,7 @@ function About() {
         <Reveal delay={0.15}>
           <div className="relative h-72 md:h-[400px] rounded-3xl overflow-hidden shadow-2xl">
             <img
-              src="https://i.ibb.co/4ZMwFVFh/IMG-20251030-WA0008.jpg"
+              src="https://i.ibb.co/WWR5r6cG/IMG-20260224-WA0004.jpg"
               alt="Tsingy"
               className="w-full h-full object-cover"
               loading="lazy"
@@ -502,7 +502,7 @@ function About() {
                 <span className="text-2xl">🏆</span>
                 <div>
                   <p className="text-white font-bold text-sm" style={{ fontFamily: sans }}>
-                    3 ans d'expérience · 260+ voyageurs
+                    3 ans d'expérience · 93+ voyageurs
                   </p>
                   <div className="flex gap-0.5 mt-0.5">
                     {[...Array(5)].map((_, i) => (

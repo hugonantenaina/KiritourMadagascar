@@ -72,7 +72,7 @@ const IconExperience = () => (
 
 const STATS = [
   {
-    value: 260, suffix: "+", decimals: 0,
+    value: 93, suffix: "+", decimals: 0,
     label: "Happy Travellers",
     sub: "Voyageurs satisfaits",
     Icon: IconTravellers,

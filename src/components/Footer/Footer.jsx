@@ -24,7 +24,7 @@ const quickLinks = [
   { name:"Our Tours",    page:"/tours",   Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg> },
   { name:"Gallery",      page:"/gallery", Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd"/></svg> },
   { name:"About Us",     page:"/home",    Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/></svg> },
-  { name:"Contact",      page:"/home",    Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg> },
+  { name:"Contact",      page:"/contact", Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg> },
 ];
 
 const popularTours = [
@@ -167,7 +167,10 @@ export function EmailFloat() {
     const t = setTimeout(() => setPulse(false), 7000);
     return () => { window.removeEventListener("scroll", onScroll); clearTimeout(t); };
   }, []);
-  const openEmail = () => window.open("mailto:infokiritourmadagascar@gmail.com?subject=Tour Inquiry&body=Hello KiriTour!", "_blank");
+  const openEmail = () => window.open(
+    "https://mail.google.com/mail/?view=cm&to=infokiritourmadagascar@gmail.com&su=KiriTour%20Inquiry&body=Hello%20KiriTour!%0A%0AI%20would%20like%20more%20information%20about%20your%20tours.%0A%0AKind%20regards,",
+    "_blank"
+  );
 
   return (
     <div className={`fixed bottom-[6.5rem] right-6 z-50 flex flex-col items-end gap-3 transition-all duration-500 ${visible?"opacity-100 translate-y-0":"opacity-0 translate-y-6 pointer-events-none"}`}>
@@ -234,15 +237,15 @@ const Footer = () => {
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-0.5 rounded-full" style={{ background:"linear-gradient(90deg,#facc15,#f59e0b)" }} />
                   <p className="text-yellow-400 text-xs font-bold tracking-[0.3em] uppercase" style={{ fontFamily:sans }}>
-                    Prêt pour l'aventure ?
+                    Ready for adventure?
                   </p>
                 </div>
                 <h2 className="text-white font-black leading-none"
                   style={{ fontFamily:serif, fontSize:"clamp(1.6rem,3.5vw,2.8rem)", letterSpacing:"-0.02em" }}>
-                  Votre Madagascar<br /><em style={{ color:"#facc15" }}>commence ici.</em>
+                  Your Madagascar<br /><em style={{ color:"#facc15" }}>starts here.</em>
                 </h2>
                 <p className="text-green-300/70 text-sm mt-3 max-w-md" style={{ fontFamily:sans }}>
-                  Réponse personnalisée en moins de 2h. Pas de frais cachés. Pas de robots.
+                  Personalised response in under 2 hours. No hidden fees. No bots.
                 </p>
               </div>
               <div className="md:col-span-2 flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3 md:items-end">
@@ -250,12 +253,12 @@ const Footer = () => {
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-black text-green-900 text-sm hover:scale-105 active:scale-95 transition-all shadow-xl"
                   style={{ background:"linear-gradient(135deg,#facc15,#f59e0b)", fontFamily:sans, boxShadow:"0 8px 30px rgba(250,204,21,0.25)" }}>
                   <WAIcon />
-                  Réserver via WhatsApp
+                  Book via WhatsApp
                 </button>
                 <button onClick={() => goTo("/tours")}
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-semibold text-white border border-white/15 hover:bg-white/8 transition-all text-sm"
                   style={{ fontFamily:sans, backdropFilter:"blur(12px)" }}>
-                  Voir tous les tours →
+                  View all tours →
                 </button>
               </div>
             </div>
@@ -281,7 +284,7 @@ const Footer = () => {
               </div>
 
               <p className="text-green-300/70 text-sm leading-relaxed mb-6" style={{ fontFamily:sans }}>
-                Depuis Morondava, nous créons des aventures inoubliables dans la région Menabe — Tsingy, Kirindy, Tsiribihina, Baobabs et bien plus.
+                Based in Morondava, we craft unforgettable adventures across the Menabe region — Tsingy, Kirindy, Tsiribihina, Baobabs and beyond.
               </p>
 
               {/* Contact details */}
@@ -289,7 +292,7 @@ const Footer = () => {
                 {[
                   { svg: <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-yellow-400"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>, t:"Morondava, 619 — Madagascar" },
                   { svg: <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-yellow-400"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>, t:"+261 33 664 07 77", href:"tel:+261336640777" },
-                  { svg: <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-yellow-400"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>, t:"infokiritourmadagascar@gmail.com", href:"mailto:infokiritourmadagascar@gmail.com" },
+                  { svg: <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-yellow-400"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>, t:"infokiritourmadagascar@gmail.com", href:"https://mail.google.com/mail/?view=cm&to=infokiritourmadagascar@gmail.com" },
                 ].map((c, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -297,7 +300,7 @@ const Footer = () => {
                       {c.svg}
                     </div>
                     {c.href
-                      ? <a href={c.href} className="text-green-200/80 text-xs hover:text-yellow-400 transition-colors leading-relaxed break-all self-center" style={{ fontFamily:sans }}>{c.t}</a>
+                      ? <a href={c.href} target={c.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="text-green-200/80 text-xs hover:text-yellow-400 transition-colors leading-relaxed break-all self-center" style={{ fontFamily:sans }}>{c.t}</a>
                       : <p className="text-green-200/80 text-xs leading-relaxed self-center" style={{ fontFamily:sans }}>{c.t}</p>
                     }
                   </div>
@@ -307,9 +310,9 @@ const Footer = () => {
               {/* Social */}
               <div className="flex gap-2">
                 {[
-                  { Icon: FBIcon, href:"https://facebook.com", bg:"#1877F2", label:"Facebook" },
-                  { Icon: YTIcon, href:"https://youtube.com",  bg:"#FF0000", label:"YouTube" },
-                  { Icon: WAIcon, href:`https://wa.me/${WA}`,  bg:"#25D366", label:"WhatsApp" },
+                  { Icon: FBIcon, href:"https://facebook.com/kiritourmadagascar", bg:"#1877F2", label:"Facebook" },
+                  { Icon: YTIcon, href:"https://youtube.com",                     bg:"#FF0000", label:"YouTube"  },
+                  { Icon: WAIcon, href:`https://wa.me/${WA}`,                     bg:"#25D366", label:"WhatsApp" },
                 ].map((s, i) => (
                   <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
                     className="group w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all duration-300 hover:scale-110 hover:-translate-y-0.5 shadow-lg"
@@ -344,7 +347,7 @@ const Footer = () => {
             <div className="lg:col-span-3">
               <h3 className="text-white font-black text-sm mb-6 flex items-center gap-2" style={{ fontFamily:serif }}>
                 <span className="w-5 h-0.5 rounded-full inline-block" style={{ background:"linear-gradient(90deg,#facc15,transparent)" }} />
-                Tours Populaires
+                Popular Tours
               </h3>
               <ul className="space-y-3">
                 {popularTours.map((t, i) => (
@@ -374,7 +377,7 @@ const Footer = () => {
                   Newsletter
                 </h3>
                 <p className="text-green-300/60 text-xs mb-3 leading-relaxed" style={{ fontFamily:sans }}>
-                  Offres exclusives et conseils de voyage directement dans votre boîte mail.
+                  Exclusive deals and travel tips delivered to your inbox.
                 </p>
                 <Newsletter />
               </div>
@@ -386,13 +389,13 @@ const Footer = () => {
                   <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"/>
                   </svg>
-                  Horaires d'ouverture
+                  Office Hours
                 </p>
                 <div className="space-y-2">
                   {[
-                    { d:"Lun – Ven", h:"8h00 – 18h00",  dot:"bg-emerald-400" },
-                    { d:"Samedi",    h:"9h00 – 16h00",   dot:"bg-yellow-400" },
-                    { d:"Dimanche",  h:"WhatsApp 📲",    dot:"bg-orange-400" },
+                    { d:"Mon – Fri", h:"8:00 AM – 6:00 PM", dot:"bg-emerald-400" },
+                    { d:"Saturday",  h:"9:00 AM – 4:00 PM", dot:"bg-yellow-400"  },
+                    { d:"Sunday",    h:"WhatsApp only 📲",   dot:"bg-orange-400"  },
                   ].map((r, i) => (
                     <div key={i} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -408,7 +411,7 @@ const Footer = () => {
               {/* Destinations */}
               <div>
                 <p className="text-yellow-400/70 text-[10px] font-bold tracking-widest uppercase mb-3" style={{ fontFamily:sans }}>
-                  Destinations couvertes
+                  Destinations we cover
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {destinations.map((d, i) => (
@@ -428,10 +431,10 @@ const Footer = () => {
           <div className={`border-t border-white/8 py-8 transition-all duration-700 delay-200 ${footerVis?"opacity-100":"opacity-0"}`}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-yellow-400"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>, v:"4.7 / 5",    l:"Note Moyenne", accent:"#facc15" },
-                { Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-emerald-400"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>, v:"260+",       l:"Voyageurs Heureux", accent:"#34d399" },
-                { Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-violet-400"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/></svg>, v:"3 ans",      l:"D'Expérience",  accent:"#a78bfa" },
-                { Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-teal-400"><path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>, v:"Éco-Certifié", l:"Partenaire Responsable", accent:"#2dd4bf" },
+                { Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-yellow-400"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>, v:"4.8 / 5",     l:"Average Rating",      accent:"#facc15" },
+                { Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-emerald-400"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>, v:"260+",        l:"Happy Travellers",     accent:"#34d399" },
+                { Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-violet-400"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/></svg>, v:"3 Years",     l:"Field Experience",     accent:"#a78bfa" },
+                { Icon: () => <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-teal-400"><path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>, v:"Eco-Certified", l:"Responsible Tourism", accent:"#2dd4bf" },
               ].map((b, i) => (
                 <div key={i} className="group flex items-center gap-3 rounded-2xl px-4 py-3.5 border border-white/8 hover:border-white/15 transition-all duration-300"
                   style={{ background:"rgba(255,255,255,0.03)" }}>
@@ -456,12 +459,12 @@ const Footer = () => {
                 <span className="text-yellow-400 font-black text-xs" style={{ fontFamily:serif }}>K</span>
               </div>
               <p className="text-green-400/50 text-xs" style={{ fontFamily:sans }}>
-                © {year} KiriTour Menabe Madagascar · Tous droits réservés.
+                © {year} KiriTour Menabe Madagascar · All rights reserved.
               </p>
             </div>
 
             <div className="flex flex-wrap gap-1 items-center justify-center">
-              {["Politique de confidentialité", "Conditions d'utilisation", "Sitemap"].map((item, i, arr) => (
+              {["Privacy Policy", "Terms of Use", "Sitemap"].map((item, i, arr) => (
                 <React.Fragment key={i}>
                   <button onClick={() => goTo("/home")}
                     className="text-green-400/40 hover:text-yellow-400/70 text-xs transition-colors"
@@ -475,7 +478,7 @@ const Footer = () => {
 
             <p className="text-green-400/30 text-[10px] flex items-center gap-1.5" style={{ fontFamily:sans }}>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" style={{ animation:"pulse 2s infinite" }} />
-              Made with 🌿 in Morondava
+              Made with 🌿 in Morondava, Madagascar
             </p>
           </div>
 
