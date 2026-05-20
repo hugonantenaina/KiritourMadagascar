@@ -6,6 +6,7 @@
    /* ═══════════════════════════════════════════
       TAILWIND — aorian'ny @import
       ═══════════════════════════════════════════ */
+   /* @tailwindcss/postcss */
    @tailwind base;
    @tailwind components;
    @tailwind utilities;
@@ -220,3 +221,4 @@
    .tdFont {
      font-size: 14px;
    }
+  

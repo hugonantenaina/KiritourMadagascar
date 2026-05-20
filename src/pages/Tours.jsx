@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 if (typeof document !== "undefined" && !document.getElementById("kt-fonts")) {
@@ -66,8 +66,8 @@ export const tours = [
     tag: "Adventure",
     tagColor: "#0369a1",
     images: [
-      "https://i.ibb.co/39X0PJvp/549159438-790143160593489-7850289184231709116-n.jpg",
-      "https://i.ibb.co/BK47QxVF/487170957-642659705341836-3523930015298641710-n.jpg",
+      "https://i.ibb.co/Y774QKWz/IMG-20260224-WA0044.jpg",
+      "https://i.ibb.co/Y7RLj7y6/IMG-20260224-WA0039.jpg",
     ],
     desc: "Three days following the legendary Tsiribihina River, drifting past red cliffs, sacred Sakalava villages and lush riverine forest. Calm days on the water and starry nights on sandbank camps make this a pure, authentic Menabe experience.",
     rating: 5,
@@ -93,7 +93,7 @@ export const tours = [
     tag: "Popular",
     tagColor: "#f97316",
     images: [
-      "https://i.ibb.co/r20kzgq7/487467732-642658478675292-3652683727424298490-n.jpg",
+      "https://i.ibb.co/KzxK6x4F/IMG-20260224-WA0059.jpg",
       "https://i.ibb.co/0yXHktRS/IMG-20260224-WA0034.jpg",
     ],
     desc: "A balanced four-day escape combining the peaceful Tsiribihina River with the dry forest of Kirindy. Drift past villages, camp on the riverbank and then search for fossa and lemurs in one of Madagascar's most important forests.",
@@ -121,7 +121,7 @@ export const tours = [
     tag: "Best Value",
     tagColor: "#16a34a",
     images: [
-      "https://i.ibb.co/842chRZk/539419198-771015829172889-8883411045894766482-n.jpg",
+      "https://i.ibb.co/7JmwLVGv/20250803-092258.jpg",
       "https://i.ibb.co/wNxNYYxT/IMG-20260224-WA0014.jpg",
     ],
     desc: "Five days to experience western Madagascar's essentials: Tsiribihina River, Kirindy Forest and the Avenue of Baobabs. A compact but complete loop for first-time visitors to Menabe.",
@@ -150,7 +150,7 @@ export const tours = [
     tag: "Extended",
     tagColor: "#7c2d12",
     images: [
-      "https://i.ibb.co/twgdVcTx/548872959-787382534202885-5235352075499216038-n.jpg",
+      "https://i.ibb.co/B5vpxZGz/IMG-20260224-WA0042.jpg",
       "https://i.ibb.co/tgr2Kkz/PXL-20250617-065209669.jpg",
     ],
     desc: "A six-day loop for travellers who want the river, the Tsingy and Kirindy in one trip.",
@@ -180,8 +180,8 @@ export const tours = [
     tag: "Epic",
     tagColor: "#7c2d12",
     images: [
-      "https://i.ibb.co/zTPWvkwR/548080866-787382674202871-303494620730471973-n.jpg",
-      "https://i.ibb.co/r20kzgq7/487467732-642658478675292-3652683727424298490-n.jpg",
+      "https://i.ibb.co/LhRZdwYS/IMG-20260224-WA0041.jpg",
+      "https://i.ibb.co/M5Q1MzwQ/IMG-20260224-WA0051.jpg",
     ],
     desc: "An eight-day grand tour for travellers who want to explore western Madagascar in depth.",
     rating: 5,
@@ -455,6 +455,135 @@ export const tours = [
   },
 ];
 
+/* ══ CUSTOM TOUR FORM ═════════════════════════════════════════════ */
+function CustomTourForm() {
+  const [form, setForm] = useState({ name:"", dates:"", group:"", budget:"", interests:"" });
+  const [sent, setSent] = useState(false);
+  const [err,  setErr]  = useState("");
+
+  const update = (k, v) => setForm(f => ({...f, [k]: v}));
+
+  const sendWA = () => {
+    if (!form.interests.trim()) { setErr("Please describe what you want to see."); return; }
+    setErr("");
+    const msg = `Hello KiriTour! I'd like a custom tour.
+
+👤 Name: ${form.name || "Not specified"}
+📅 Dates: ${form.dates || "Flexible"}
+👥 Group: ${form.group || "Not specified"}
+💶 Budget: ${form.budget || "To discuss"}
+🌍 I want to see: ${form.interests}
+
+Please help me design the perfect itinerary!`;
+    window.open(`https://wa.me/261336640777?text=${encodeURIComponent(msg)}`, "_blank");
+    setSent(true);
+    setTimeout(() => setSent(false), 4000);
+  };
+
+  const sendEmail = () => {
+    if (!form.interests.trim()) { setErr("Please describe what you want to see."); return; }
+    setErr("");
+    const subject = "Custom Tour Request — KiriTour Madagascar";
+    const body = `Hello KiriTour,
+
+I would like to design a custom tour.
+
+Name: ${form.name || "Not specified"}
+Dates: ${form.dates || "Flexible"}
+Group size: ${form.group || "Not specified"}
+Budget: ${form.budget || "To discuss"}
+What I want to see: ${form.interests}
+
+Please send me a personalised itinerary and quote.
+
+Kind regards`;
+    window.open(`https://mail.google.com/mail/?view=cm&to=infokiritourmadagascar@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
+  };
+
+  const inputStyle = {
+    fontFamily: sans,
+    background: "rgba(255,255,255,0.92)",
+    border: "2px solid transparent",
+    transition: "border-color 0.2s",
+  };
+  const onFocus = e => e.target.style.borderColor = "rgba(250,204,21,0.6)";
+  const onBlur  = e => e.target.style.borderColor = "transparent";
+
+  return (
+    <div className="rounded-3xl p-8 md:p-10" style={{ background: "rgba(255,255,255,0.05)", border: "1.5px solid rgba(250,204,21,0.2)", backdropFilter: "blur(12px)" }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        {/* Name */}
+        <input type="text" placeholder="Your name" value={form.name}
+          onChange={e => update("name", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none"
+          style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+        {/* Dates */}
+        <input type="text" placeholder="Travel dates (e.g. July 10–20)" value={form.dates}
+          onChange={e => update("dates", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none"
+          style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+        {/* Group */}
+        <input type="text" placeholder="Group size (e.g. 2 adults)" value={form.group}
+          onChange={e => update("group", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none"
+          style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+        {/* Budget */}
+        <input type="text" placeholder="Budget per person (e.g. €500)" value={form.budget}
+          onChange={e => update("budget", e.target.value)}
+          className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none"
+          style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+      </div>
+
+      {/* Interests */}
+      <textarea
+        placeholder="What do you want to see and do? (e.g. Tsingy + baobabs at sunset + fossa spotting + beach + local culture...)"
+        value={form.interests}
+        onChange={e => { update("interests", e.target.value); setErr(""); }}
+        rows={4}
+        className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none resize-none mb-4"
+        style={inputStyle} onFocus={onFocus} onBlur={onBlur}
+      />
+
+      {/* Error */}
+      {err && (
+        <p className="text-red-400 text-xs mb-3 flex items-center gap-1.5" style={{ fontFamily: sans }}>
+          <span>⚠️</span> {err}
+        </p>
+      )}
+
+      {/* Success */}
+      {sent && (
+        <div className="mb-4 px-4 py-3 rounded-xl text-sm font-semibold text-center"
+          style={{ background: "rgba(52,211,153,0.15)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)", fontFamily: sans }}>
+          ✅ Opening WhatsApp... we'll reply within 2 hours!
+        </div>
+      )}
+
+      {/* Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button onClick={sendWA}
+          className="flex-1 flex items-center justify-center gap-2.5 py-4 rounded-2xl font-black text-green-900 text-sm hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl"
+          style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", fontFamily: sans, boxShadow: "0 8px 32px rgba(250,204,21,0.3)" }}>
+          <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current flex-shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a9.87 9.87 0 00-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Send via WhatsApp
+        </button>
+        <button onClick={sendEmail}
+          className="flex-1 flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-white text-sm hover:scale-105 active:scale-95 transition-all duration-300"
+          style={{ background: "rgba(255,255,255,0.1)", border: "1.5px solid rgba(255,255,255,0.2)", fontFamily: sans }}>
+          <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M5 7l7 6 7-6"/>
+          </svg>
+          Send via Email
+        </button>
+      </div>
+
+      <p className="text-center text-green-400/40 text-[11px] mt-4" style={{ fontFamily: sans }}>
+        🔒 Your information is secure · We reply within 2 hours · No commitment required
+      </p>
+    </div>
+  );
+}
+
 /* ══ TOUR CARD ════════════════════════════════════════════════════ */
 function TourCard({ tour, onOpen }) {
   const [ci, setCi] = useState(0);
@@ -611,6 +740,28 @@ export default function Tours() {
               <TourCard key={t.id} tour={t} onOpen={() => {}} />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* CUSTOM TOUR FORM */}
+      <section className="py-20 px-4" style={{ background: "linear-gradient(135deg,#020d06 0%,#071a0e 40%,#0a2415 100%)" }}>
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 text-xs font-bold tracking-widest uppercase"
+              style={{ background: "rgba(250,204,21,0.12)", border: "1px solid rgba(250,204,21,0.3)", color: "#facc15", fontFamily: sans }}>
+              ✨ 100% Customizable
+            </div>
+            <h2 className="text-white font-black leading-tight mb-3" style={{ fontFamily: serif, fontSize: "clamp(1.8rem,4vw,3rem)" }}>
+              Don't see your perfect tour?<br />
+              <em style={{ color: "#facc15" }}>Design it yourself.</em>
+            </h2>
+            <p className="text-green-300/70 text-sm max-w-xl mx-auto leading-relaxed" style={{ fontFamily: sans }}>
+              Tell us your dream — dates, destinations, interests and budget.
+              We'll build a tailor-made Madagascar itinerary and send you a quote within 2 hours.
+            </p>
+          </div>
+
+          <CustomTourForm />
         </div>
       </section>
 

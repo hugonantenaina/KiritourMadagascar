@@ -14,7 +14,7 @@ const WA    = "261336640777";
 const waOpen = (msg) => window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg || "Hello KiriTour!")}`, "_blank");
 
 const goTo = (page) => {
-  window.location.hash = page;
+  window.location.href = page;
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
@@ -269,18 +269,14 @@ const Footer = () => {
 
             {/* ── Col 1: Brand (span 3) ── */}
             <div className="lg:col-span-3">
-              {/* Logo */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-xl"
-                  style={{ background:"linear-gradient(135deg,#14532d,#166534)", border:"1.5px solid rgba(250,204,21,0.3)" }}>
-                  <span className="text-yellow-400 font-black text-2xl" style={{ fontFamily:serif }}>K</span>
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#020d06]"
-                    style={{ background:"linear-gradient(135deg,#facc15,#f59e0b)" }} />
-                </div>
-                <div>
-                  <p className="text-white font-black text-2xl leading-none" style={{ fontFamily:serif }}>KiriTour</p>
-                  <p className="text-yellow-400/70 text-xs font-semibold tracking-widest uppercase mt-0.5" style={{ fontFamily:sans }}>Menabe · Madagascar</p>
-                </div>
+              {/* Logo horizontal SVG */}
+              <div className="mb-6">
+                <img
+                  src="/logo-horizontal.svg"
+                  alt="KiriTour Madagascar"
+                  className="h-16 w-auto object-contain"
+                  loading="lazy"
+                />
               </div>
 
               <p className="text-green-300/70 text-sm leading-relaxed mb-6" style={{ fontFamily:sans }}>
@@ -454,9 +450,8 @@ const Footer = () => {
           {/* ══════ BOTTOM BAR ══════ */}
           <div className={`border-t border-white/8 py-6 flex flex-col md:flex-row justify-between items-center gap-4 transition-all duration-700 delay-300 ${footerVis?"opacity-100":"opacity-0"}`}>
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-lg flex items-center justify-center"
-                style={{ background:"rgba(250,204,21,0.15)", border:"1px solid rgba(250,204,21,0.2)" }}>
-                <span className="text-yellow-400 font-black text-xs" style={{ fontFamily:serif }}>K</span>
+              <div className="w-6 h-6 flex-shrink-0">
+                <img src="/favicon.svg" alt="KiriTour" className="w-full h-full object-contain" />
               </div>
               <p className="text-green-400/50 text-xs" style={{ fontFamily:sans }}>
                 © {year} KiriTour Menabe Madagascar · All rights reserved.
@@ -464,12 +459,17 @@ const Footer = () => {
             </div>
 
             <div className="flex flex-wrap gap-1 items-center justify-center">
-              {["Privacy Policy", "Terms of Use", "Sitemap"].map((item, i, arr) => (
+              {[
+                { label:"Privacy Policy",      path:"/privacy" },
+                { label:"Terms & Conditions",  path:"/terms" },
+                { label:"Booking Conditions",  path:"/booking-conditions" },
+                { label:"Contact",             path:"/contact" },
+              ].map((item, i, arr) => (
                 <React.Fragment key={i}>
-                  <button onClick={() => goTo("/home")}
+                  <button onClick={() => goTo(item.path)}
                     className="text-green-400/40 hover:text-yellow-400/70 text-xs transition-colors"
                     style={{ fontFamily:sans }}>
-                    {item}
+                    {item.label}
                   </button>
                   {i < arr.length - 1 && <span className="text-green-600/30 text-xs mx-1">·</span>}
                 </React.Fragment>

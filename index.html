@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Google Search Console verification -->
-    <meta name="google-site-verification" content="jVuh2MzAthVr6NqoPuxO3XrevdT4j22QtajA6rwj8cs" />
+    <meta name="google-site-verification" content="5FwAkhAzlNIYSIqHdLStu5RdXI9DSZ26XP5dc4ISx_Q" />
 
     <!-- ═══ FAVICON ═══ -->
-    <link rel="icon" type="image/x-icon"   href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon"   href="/favicon1.ico" />
     <link rel="icon" type="image/svg+xml"  href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
@@ -33,14 +33,14 @@
     <meta name="ICBM"          content="-20.2833, 44.2833" />
 
     <!-- ═══ CANONICAL — domaine vaovao ═══ -->
-    <link rel="canonical" href="https://kiritourmadagascar.com/" />
+    <link rel="canonical" href="https://www.kiritourmadagascar.com/" />
 
     <!-- ═══ OPEN GRAPH ═══ -->
     <meta property="og:type"         content="website" />
     <meta property="og:site_name"    content="KiriTour Madagascar" />
     <meta property="og:title"        content="KiriTour Madagascar — Tours Baobabs, Tsingy & Wildlife" />
     <meta property="og:description"  content="Discover Madagascar with KiriTour. Baobabs, Tsingy UNESCO, Kirindy Forest, Tsiribihina River. ⭐4.8/5 — Book now via WhatsApp!" />
-    <meta property="og:url"          content="https://kiritourmadagascar.com/" />
+    <meta property="og:url"          content="https://www.kiritourmadagascar.com/" />
     <meta property="og:image"        content="https://i.ibb.co/tTC581R8/GA5.jpg" />
     <meta property="og:image:width"  content="1200" />
     <meta property="og:image:height" content="630" />
@@ -62,14 +62,14 @@
       "@graph": [
         {
           "@type": "TouristInformationCenter",
-          "@id": "https://kiritourmadagascar.com/#organization",
+          "@id": "https://www.kiritourmadagascar.com/#organization",
           "name": "KiriTour Madagascar",
           "alternateName": "KiriTour",
           "description": "Expert eco tour operator in Morondava, Madagascar. Specialising in Avenue of the Baobabs, Tsingy de Bemaraha UNESCO, Kirindy Forest wildlife safaris, Tsiribihina River descent and cultural tours.",
-          "url": "https://kiritourmadagascar.com/",
+          "url": "https://www.kiritourmadagascar.com/",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://kiritourmadagascar.com/favicon-512.png",
+            "url": "https://www.kiritourmadagascar.com/favicon-512.png",
             "width": 512,
             "height": 512
           },
@@ -121,11 +121,11 @@
         },
         {
           "@type": "WebSite",
-          "@id": "https://kiritourmadagascar.com/#website",
-          "url": "https://kiritourmadagascar.com/",
+          "@id": "https://www.kiritourmadagascar.com/#website",
+          "url": "https://www.kiritourmadagascar.com/",
           "name": "KiriTour Madagascar",
           "description": "Madagascar tour operator — Baobabs, Tsingy, Wildlife",
-          "publisher": { "@id": "https://kiritourmadagascar.com/#organization" },
+          "publisher": { "@id": "https://www.kiritourmadagascar.com/#organization" },
           "inLanguage": "en-US",
           "potentialAction": {
             "@type": "SearchAction",
@@ -142,7 +142,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://i.ibb.co" />
     <link rel="dns-prefetch" href="https://api.dicebear.com" />
-  </head>
+  <script>
+    // GitHub Pages BrowserRouter redirect fix
+    (function(l) {
+      var q = l.search;
+      if (q && q.indexOf('redirect=') !== -1) {
+        var params = new URLSearchParams(q);
+        var redirect = params.get('redirect');
+        if (redirect) {
+          window.history.replaceState(null, null, redirect);
+        }
+      }
+    }(window.location))
+  </script>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

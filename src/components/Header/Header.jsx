@@ -5,6 +5,9 @@ import {
   FaHome, FaWhatsapp, FaSignOutAlt, FaSignInAlt,
   FaUserPlus, FaTimes, FaCompass, FaImage,
   FaMapMarkedAlt, FaHotel, FaEnvelope, FaQuestionCircle,
+  FaFileContract,
+  FaShieldAlt,
+  FaClipboardList,
 } from "react-icons/fa";
 
 /* ════════════════════════════════════════════════════════════
@@ -166,6 +169,32 @@ const Header = () => {
             <Link to="/faq" className={lnkCls("/faq")}>
               <FaQuestionCircle size={11} className="opacity-60 flex-shrink-0" /> FAQ <Underline path="/faq" />
             </Link>
+
+            {/* Legal dropdown */}
+            <div className="relative group">
+              <button className={btnNavCls}>
+                <FaFileContract size={11} className="opacity-60 flex-shrink-0" /> Legal
+                <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-all group-hover:rotate-180 duration-200"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
+                <span className="absolute -bottom-1 left-0 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 to-yellow-200 w-0 group-hover:w-full transition-all duration-300" />
+              </button>
+              {/* Dropdown */}
+              <div className="absolute top-full left-0 mt-3 w-52 rounded-2xl overflow-hidden shadow-2xl border border-white/10 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 translate-y-1 group-hover:translate-y-0 z-50"
+                style={{ background: "linear-gradient(135deg,#0d3318,#14532d)" }}>
+                <div className="p-1.5 space-y-0.5">
+                  {[
+                    { to:"/privacy",            icon:<FaShieldAlt />,      label:"Privacy Policy"      },
+                    { to:"/terms",              icon:<FaFileContract />,   label:"Terms & Conditions"  },
+                    { to:"/booking-conditions", icon:<FaClipboardList />,  label:"Booking Conditions"  },
+                  ].map((item) => (
+                    <Link key={item.to} to={item.to}
+                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-white/80 hover:text-yellow-400 hover:bg-white/8 transition-all">
+                      <span className="text-yellow-400/60 text-sm">{item.icon}</span>
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
           </nav>
 
           {/* ── Auth — desktop ── */}
@@ -272,6 +301,9 @@ const Header = () => {
             { to: "/about",   icon: <FaImage />,          label: "Gallery" },
             { to: "/contact", icon: <FaEnvelope />,       label: "Contact" },
             { to: "/faq",     icon: <FaQuestionCircle />, label: "FAQ"     },
+            { to: "/privacy",            icon: <FaShieldAlt />,     label: "Privacy Policy"     },
+            { to: "/terms",              icon: <FaFileContract />,  label: "Terms & Conditions" },
+            { to: "/booking-conditions", icon: <FaClipboardList />, label: "Booking Conditions" },
           ].map((item) => (
             <Link key={item.to} to={item.to} onClick={close}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all

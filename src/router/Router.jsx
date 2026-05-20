@@ -15,6 +15,9 @@ import AdminTours from '../Dashboard/AdminPanel/AdminTours'
 import CreateTours from '../Dashboard/AdminPanel/CreateTours'
 import UpdateTours from '../Dashboard/AdminPanel/UpdateTour'
 import FAQ from '../pages/FAQ'
+import TermsPage from '../pages/TermsPage'
+import PrivacyPage from '../pages/PrivacyPage'
+import BookingConditionsPage from '../pages/BookingConditionsPage'
 
 const Router = () => {
   return (
@@ -35,8 +38,10 @@ const Router = () => {
         <Route path='/contact' element={<Contact />} />
         <Route path='/tours/search' element={<SearchResultList />} />
         <Route path='/faq' element={<FAQ />} />
+        <Route path='/terms' element={<TermsPage />} />
+        <Route path='/privacy' element={<PrivacyPage />} />
+        <Route path='/booking-conditions' element={<BookingConditionsPage />} />
     </Routes>
   )
 }
-
 export default Router
