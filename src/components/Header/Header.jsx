@@ -266,7 +266,7 @@ const Header = () => {
             <div className="relative w-12 h-12">
               <div className="absolute inset-0 rounded-full bg-yellow-400" style={{ boxShadow: "0 0 16px rgba(250,204,21,.5)" }} />
               <div className="absolute inset-[3px] rounded-full bg-green-900 overflow-hidden">
-                <img src="/KiritourMadagascar/favicon-192.png" alt="" className="w-full h-full object-cover scale-150" />
+                <img src="/favicon-192.png" alt="" className="w-full h-full object-cover scale-150" />
               </div>
             </div>
             <div>

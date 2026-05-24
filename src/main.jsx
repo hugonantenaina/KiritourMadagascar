@@ -7,6 +7,26 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContextProvider } from './context/AuthContext'
 import ScrollToTop from './components/ScrollToTop'
+import OneSignal from 'react-onesignal';
+
+// ── OneSignal Init ──────────────────────────────
+OneSignal.init({
+  appId: "490c17ae-8d20-494a-9afe-4747ba00c693",
+  notifyButton: { enable: false },
+  promptOptions: {
+    slidedown: {
+      enabled: true,
+      autoPrompt: true,
+      timeDelay: 6,
+      pageViews: 1,
+      actionMessage: "Get exclusive Madagascar tour offers from KiriTour! 🌴",
+      acceptButtonText: "Yes, notify me!",
+      cancelButtonText: "No thanks",
+    },
+  },
+  allowLocalhostAsSecureOrigin: true,
+});
+// ───────────────────────────────────────────────
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

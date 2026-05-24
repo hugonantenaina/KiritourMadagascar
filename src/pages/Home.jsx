@@ -88,10 +88,10 @@ function ScanLine({ delay }) {
 }
 
 const slides = [
-  { img: "https://i.ibb.co/ksx7M9G2/IMG-20260224-WA0019.jpg", label: "Avenue of the Baobabs",  sub: "Madagascar's Most Iconic Landscape" },
+   { img: "https://i.ibb.co/LXtXZycL/IMG-20251030-WA0058.jpg", label: "Kirindy Forest Reserve", sub: "Home of the Elusive Fossa" },
+  { img: "https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/v1779367774/IMG-20260224-WA0029_hjrlcx.jpg", label: "Avenue of the Baobabs",  sub: "Madagascar's Most Iconic Landscape" },
   { img: "https://i.ibb.co/YBDp5cM5/20250817-102639.jpg",     label: "Tsingy de Bemaraha",    sub: "UNESCO World Heritage Site" },
-  { img: "https://i.ibb.co/4ZMwFVFh/IMG-20251030-WA0008.jpg", label: "Kirindy Forest Reserve", sub: "Home of the Elusive Fossa" },
-];
+ ];
 
 const wildlife = [
   { emoji: "🦁", name: "Fossa",         desc: "Madagascar's apex predator — only in Kirindy" },

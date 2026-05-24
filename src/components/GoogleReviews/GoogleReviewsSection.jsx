@@ -22,10 +22,19 @@ const MAPS_URL =
   "https://maps.google.com/?q=KiriTour+Madagascar+Morondava";
 
 const REVIEW_URL =
-  "https://search.google.com/local/writereview?placeid=ChIJP74X_pbaTBkRJWTUvCWlWzU";
+  "https://maps.app.goo.gl/TCuJ6BVSJZhCpbk37";
 
 /* ── Client photos avy amin'ny client tena izy ── */
 const clientPhotos = [
+  { src: "https://i.ibb.co/bRLCScNw/Whats-App-Image-2026-05-16-at-16-04-38-1.jpg", caption: "Tour Moment 1"           },
+  { src: "https://i.ibb.co/xWPHrkt/Whats-App-Image-2026-05-16-at-16-04-38.jpg",     caption: "Tour Experience"       },
+  { src: "https://i.ibb.co/Z1L1LpqP/Whats-App-Image-2026-05-16-at-16-04-39-1.jpg",   caption: "Adventure Highlights"  },
+  { src: "https://i.ibb.co/kgPL8Nxs/Whats-App-Image-2026-05-16-at-16-04-39.jpg",     caption: "Scenic Discovery"      },
+  { src: "https://i.ibb.co/5hqCyv6q/Whats-App-Image-2026-05-16-at-16-04-40-1.jpg",   caption: "Nature Exploration"    },
+  { src: "https://i.ibb.co/YFt7zn3C/Whats-App-Image-2026-05-16-at-16-04-40.jpg",     caption: "Travel Memories"       },
+  { src: "https://i.ibb.co/WWJ9jtHg/Whats-App-Image-2026-05-16-at-16-04-41-1.jpg",   caption: "Tour Highlights"       },
+  { src: "https://i.ibb.co/VW3P8dNb/Whats-App-Image-2026-05-16-at-16-04-41.jpg",     caption: "Journey Moments"       },
+  { src: "https://i.ibb.co/Q7sjSkbP/Whats-App-Image-2026-05-16-at-16-04-42-1.jpg",   caption: "Unforgettable Views"   },
   { src: "https://i.ibb.co/ksx7M9G2/IMG-20260224-WA0019.jpg",  caption: "Avenue of the Baobabs"  },
   { src: "https://i.ibb.co/YBDp5cM5/20250817-102639.jpg",       caption: "Tsingy de Bemaraha"     },
   { src: "https://i.ibb.co/4ZMwFVFh/IMG-20251030-WA0008.jpg",   caption: "Kirindy Forest"          },
@@ -38,6 +47,11 @@ const clientPhotos = [
   { src: "https://i.ibb.co/HT6LRFzC/20250810-063819.jpg",       caption: "Tsiribihina River"       },
   { src: "https://i.ibb.co/mrxKPM2q/20250817-104453.jpg",       caption: "Tsingy Landscape"        },
   { src: "https://i.ibb.co/0yXHktRS/IMG-20260224-WA0034.jpg",   caption: "Madagascar Nature"       },
+  { src: "https://i.ibb.co/TDQGgb1k/Whats-App-Image-2026-05-16-at-16-04-42-2.jpg",   caption: "Guest Adventure"       },
+  { src: "https://i.ibb.co/4ZnfvzK2/Whats-App-Image-2026-05-16-at-16-04-43.jpg",     caption: "Madagascar Magic"      },
+  { src: "https://i.ibb.co/G3HGh7jK/Whats-App-Image-2026-05-16-at-16-04-44-1.jpg",   caption: "Explorer's Paradise"   },
+  { src: "https://i.ibb.co/mVzhX4JG/Whats-App-Image-2026-05-16-at-16-04-44.jpg",     caption: "Tour Experience 2"     },
+  
 ];
 
 /* ── Lightbox ── */
@@ -119,7 +133,7 @@ export default function GoogleReviewsSection() {
             )}
             <iframe
               title="KiriTour Madagascar on Google Maps"
-              src={`https://maps.google.com/maps?q=KiriTour+Madagascar+Morondava+Madagascar&output=embed&z=14&hl=fr`}
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2889.4709142164716!2d44.29792289999999!3d-20.292750899999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1f5ed10017ac9d8b%3A0x102dc5bbd865b59!2skiritourMadagascar!5e1!3m2!1sfr!2smg!4v1779281582013!5m2!1sfr!2smg"
               width="100%"
               height="100%"
               style={{ border: 0, minHeight: 380, display: "block" }}
