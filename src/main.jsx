@@ -12,6 +12,8 @@ import OneSignal from 'react-onesignal';
 // ── OneSignal Init ──────────────────────────────
 OneSignal.init({
   appId: "490c17ae-8d20-494a-9afe-4747ba00c693",
+  serviceWorkerParam: { scope: "/" },
+  serviceWorkerPath: "OneSignalSDKWorker.js",
   notifyButton: { enable: false },
   promptOptions: {
     slidedown: {
@@ -25,7 +27,7 @@ OneSignal.init({
     },
   },
   allowLocalhostAsSecureOrigin: true,
-});
+}).catch(err => console.log("OneSignal init error:", err));
 // ───────────────────────────────────────────────
 
 ReactDOM.createRoot(document.getElementById('root')).render(
