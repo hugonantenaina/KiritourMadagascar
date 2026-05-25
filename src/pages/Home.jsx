@@ -22,6 +22,16 @@ const wa    = (msg) => window.open(`https://wa.me/${WA}?text=${encodeURIComponen
 const serif = "'Playfair Display', serif";
 const sans  = "'DM Sans', sans-serif";
 
+/* ── Preload slide 1 image — FIX LCP ── */
+if (typeof document !== "undefined" && !document.getElementById("kt-preload")) {
+  const preload = document.createElement("link");
+  preload.id = "kt-preload";
+  preload.rel = "preload";
+  preload.as = "image";
+  preload.href = "https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_1200/v1779706214/IMG-20251030-WA0058_ddsyrf.jpg";
+  document.head.appendChild(preload);
+}
+
 function useOnceVisible(threshold = 0.15) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -45,32 +55,23 @@ function Reveal({ children, delay = 0, y = 50, className = "", style = {} }) {
       ...style,
       opacity: vis ? 1 : 0,
       transform: vis ? "translateY(0px)" : `translateY(${y}px)`,
-      transition: `opacity 0.9s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.9s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
-      willChange: "opacity, transform",
+      transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
     }}>
       {children}
     </div>
   );
 }
 
+/* ── AnimChars — simplifié pour réduire animations ── */
 function AnimChars({ text, baseDelay = 0, color, italic = false }) {
   return (
-    <>
-      {text.split("").map((ch, i) => (
-        <span key={i} className="inline-block overflow-hidden" style={{ verticalAlign: "bottom" }}>
-          <span className="inline-block" style={{
-            color: color || "inherit",
-            fontStyle: italic ? "italic" : "normal",
-            animation: `capcut-char 0.75s cubic-bezier(0.16,1,0.3,1) ${baseDelay + i * 0.038}s both`,
-            whiteSpace: ch === " " ? "pre" : "normal",
-            willChange: "transform, opacity",
-            transform: "translateZ(0)",
-          }}>
-            {ch === " " ? "\u00A0" : ch}
-          </span>
-        </span>
-      ))}
-    </>
+    <span style={{
+      color: color || "inherit",
+      fontStyle: italic ? "italic" : "normal",
+      animation: `hero-fade-up 0.8s ease ${baseDelay}s both`,
+    }}>
+      {text}
+    </span>
   );
 }
 
@@ -82,16 +83,15 @@ function ScanLine({ delay }) {
       boxShadow: "0 0 18px rgba(250,204,21,.75)",
       animation: `capcut-scan 1.1s ease-in-out ${delay}s both`,
       zIndex: 5,
-      willChange: "transform, opacity",
     }} />
   );
 }
 
 const slides = [
-   { img: "https://i.ibb.co/LXtXZycL/IMG-20251030-WA0058.jpg", label: "Kirindy Forest Reserve", sub: "Home of the Elusive Fossa" },
-  { img: "https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/v1779367774/IMG-20260224-WA0029_hjrlcx.jpg", label: "Avenue of the Baobabs",  sub: "Madagascar's Most Iconic Landscape" },
-  { img: "https://i.ibb.co/YBDp5cM5/20250817-102639.jpg",     label: "Tsingy de Bemaraha",    sub: "UNESCO World Heritage Site" },
- ];
+  { img: "https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_1200/v1779706214/IMG-20251030-WA0058_ddsyrf.jpg", label: "Kirindy Forest Reserve", sub: "Home of the Elusive Fossa" },
+  { img: "https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_1200/v1779367774/IMG-20260224-WA0029_hjrlcx.jpg", label: "Avenue of the Baobabs",  sub: "Madagascar's Most Iconic Landscape" },
+  { img: "https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_1200/v1779706266/20250817-102639_fcnag5.jpg",     label: "Tsingy de Bemaraha",    sub: "UNESCO World Heritage Site" },
+];
 
 const wildlife = [
   { emoji: "🦁", name: "Fossa",         desc: "Madagascar's apex predator — only in Kirindy" },
@@ -116,7 +116,7 @@ const howItWorks = [
   { step:"04", emoji:"🌴", title:"Explore Madagascar", desc:"Your guide meets you on arrival. Everything is handled — transfers, accommodation, park permits, meals.",       color:"#7c3aed", bg:"#f5f3ff" },
 ];
 
-/* ── HERO ── */
+/* ── HERO — LCP + CLS fixed ── */
 function Hero() {
   const [cur,     setCur]     = useState(0);
   const [loading, setLoading] = useState(true);
@@ -134,20 +134,26 @@ function Hero() {
     }
   }, [loading, armed]);
 
-  if (loading) return <LoadingScreen onComplete={() => setLoading(false)} />;
-
   return (
-    <section className="relative w-full overflow-hidden"
-      style={{ height: "100svh", minHeight: 620, maxHeight: 960, contain: "layout" }}>
+    <>
+      {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
+    <section
+      className="relative w-full overflow-hidden"
+      style={{ height: "100svh", minHeight: 620, maxHeight: 960, contain: "layout" }}
+    >
       {slides.map((s, i) => (
-        <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ${i === cur ? "opacity-100" : "opacity-0"}`}
-          style={{ willChange: "opacity" }}>
-          <img src={s.img} alt={s.label}
+        <div key={i}
+          className={`absolute inset-0 transition-opacity duration-1000 ${i === cur ? "opacity-100" : "opacity-0"}`}>
+          {/* ✅ FIX CLS — width + height explicites */}
+          <img
+            src={s.img}
+            alt={s.label}
+            width="1200"
+            height="800"
             className="absolute inset-0 w-full h-full object-cover"
             fetchpriority={i === 0 ? "high" : "low"}
             loading={i === 0 ? "eager" : "lazy"}
             decoding={i === 0 ? "sync" : "async"}
-            style={{ animation: i === cur ? "hero-kb 9s ease-out both" : "none", willChange: "transform" }}
           />
           <div className="absolute inset-0"
             style={{ background: "linear-gradient(to bottom,rgba(0,0,0,.10) 0%,rgba(0,0,0,.50) 52%,rgba(0,0,0,.86) 100%)" }} />
@@ -175,17 +181,17 @@ function Hero() {
         <div className="relative mb-[2px]">
           <ScanLine delay={0.72} />
           <h1 style={{ fontFamily: serif, fontSize: "clamp(2.8rem,7vw,7rem)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-.03em", color: "#fff", textShadow: "0 4px 60px rgba(0,0,0,.7)" }}>
-            {armed && <AnimChars text="Feel the Wild." baseDelay={0.76} />}
+            {armed && <AnimChars text="Feel the Wild." baseDelay={0.56} />}
           </h1>
         </div>
         <div className="relative mb-9">
           <ScanLine delay={1.14} />
           <h1 style={{ fontFamily: serif, fontSize: "clamp(2.8rem,7vw,7rem)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-.03em", textShadow: "0 0 60px rgba(250,204,21,.5),0 4px 30px rgba(0,0,0,.8)" }}>
-            {armed && <AnimChars text="Book Now." baseDelay={1.18} color="#facc15" italic={false} />}
+            {armed && <AnimChars text="Book Now." baseDelay={0.76} color="#facc15" />}
           </h1>
         </div>
 
-        <div style={{ animation: armed ? "hero-fade-up .8s ease 2.1s both" : "none" }}>
+        <div style={{ animation: armed ? "hero-fade-up .8s ease 1.2s both" : "none" }}>
           <p className="text-white/65 text-sm md:text-base max-w-sm mb-2 text-left" style={{ fontFamily: sans }}>{slides[cur].sub}</p>
           <p className="text-white/35 text-xs mb-10 flex items-center justify-start gap-1.5">
             <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-yellow-400/60" aria-hidden="true">
@@ -196,13 +202,11 @@ function Hero() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-start"
-          style={{ animation: armed ? "hero-fade-up .8s ease 2.4s both" : "none" }}>
+          style={{ animation: armed ? "hero-fade-up .8s ease 1.4s both" : "none" }}>
           <button onClick={() => wa("Hello KiriTour! I'd like to book a tour.")}
             aria-label="Book your Madagascar tour via WhatsApp"
             className="relative overflow-hidden px-9 py-4 rounded-full font-black text-green-900 text-base hover:scale-105 active:scale-95 transition-transform duration-300"
             style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", boxShadow: "0 0 40px rgba(250,204,21,.45)", fontFamily: sans }}>
-            <span className="absolute inset-0 pointer-events-none rounded-full"
-              style={{ background: "linear-gradient(105deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%)", animation: "btn-shimmer 3.5s ease-in-out 3.5s infinite" }} />
             <span className="relative z-10">📲 Book Your Adventure</span>
           </button>
           <button onClick={() => document.getElementById("tours-section")?.scrollIntoView({ behavior: "smooth" })}
@@ -231,19 +235,8 @@ function Hero() {
             style={{ width: i === cur ? 32 : 10, height: 10, background: i === cur ? "#facc15" : "rgba(255,255,255,.32)" }} />
         ))}
       </div>
-
-      <div className="absolute bottom-8 right-7 z-20 hidden md:flex flex-col items-center gap-3"
-        style={{ animation: armed ? "hero-fade-up 1s ease 3.2s both" : "none" }}>
-        <p className="text-white/45 text-[10px] font-semibold tracking-[.35em] uppercase" style={{ fontFamily: sans, writingMode: "vertical-rl" }}>scroll</p>
-        <div className="rounded-full overflow-hidden" style={{ width: 3, height: 56, background: "rgba(255,255,255,.15)" }}>
-          <div className="w-full rounded-full" style={{ height: "45%", background: "linear-gradient(to bottom,#facc15,#f59e0b)", boxShadow: "0 0 8px rgba(250,204,21,.7)", animation: "scroll-bar 2s ease-in-out 3.5s infinite", willChange: "transform" }} />
-        </div>
-        <svg viewBox="0 0 16 24" fill="none" stroke="#facc15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-          aria-hidden="true" style={{ width: 14, opacity: 0.7, animation: "scroll-chevron 1.6s ease-in-out 3.5s infinite" }}>
-          <polyline points="3,6 8,12 13,6" /><polyline points="3,13 8,19 13,13" />
-        </svg>
-      </div>
     </section>
+    </>
   );
 }
 
@@ -270,9 +263,15 @@ function About() {
           </button>
         </Reveal>
         <Reveal delay={0.15}>
-          <div className="relative h-72 md:h-[400px] rounded-3xl overflow-hidden shadow-2xl">
-            <img src="https://i.ibb.co/WWR5r6cG/IMG-20260224-WA0004.jpg" alt="Tsingy de Bemaraha limestone pinnacles"
-              className="w-full h-full object-cover" loading="lazy" decoding="async" />
+          {/* ✅ FIX CLS — aspect-ratio container */}
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ aspectRatio: "4/3" }}>
+            <img
+              src="https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_800/v1779706560/IMG-20260224-WA0004_cpdoex.jpg"
+              alt="Tsingy de Bemaraha limestone pinnacles"
+              width="800" height="600"
+              className="w-full h-full object-cover"
+              loading="lazy" decoding="async"
+            />
             <div className="absolute inset-0 rounded-3xl" style={{ background: "linear-gradient(to top,rgba(20,83,45,.65) 0%,transparent 55%)" }} />
             <div className="absolute bottom-5 left-5 right-5">
               <div className="flex items-center gap-3 rounded-xl px-4 py-3 border border-white/20 backdrop-blur-md" style={{ background: "rgba(255,255,255,.12)" }}>
@@ -320,11 +319,11 @@ function Wildlife() {
 function TourCategories() {
   const navigate = useNavigate();
   const categories = [
-    { id:"tsiribihina", emoji:"🚣", name:"Tsiribihina River",   desc:"3 to 8-day pirogue descents through sacred Sakalava villages, wild camping on remote sandbanks", image:"https://i.ibb.co/HT6LRFzC/20250810-063819.jpg",    tours:"5 tours available", from:"529€", gradient:"from-blue-500 to-cyan-600" },
-    { id:"andasibe",    emoji:"🦎", name:"Andasibe Rainforest",  desc:"Indri lemurs, Mantadia National Park, night walks through misty rainforest trails",              image:"https://i.ibb.co/WvgBzyDQ/IMG-20251030-WA0087.jpg", tours:"4 tours available", from:"996€", gradient:"from-green-500 to-emerald-600" },
-    { id:"tsingy",      emoji:"⛰️", name:"Tsingy de Bemaraha",  desc:"UNESCO stone forest with harnesses, suspension bridges, razor-sharp limestone pinnacles",         image:"https://i.ibb.co/mrxKPM2q/20250817-104453.jpg",     tours:"2 tours available", from:"369€", gradient:"from-orange-500 to-amber-600" },
-    { id:"kirindy",     emoji:"🌳", name:"Kirindy Forest",       desc:"Fossa sightings, nocturnal lemurs, dry forest wildlife in Madagascar's apex predator territory",  image:"https://i.ibb.co/4ZMwFVFh/IMG-20251030-WA0008.jpg", tours:"2 tours available", from:"191€", gradient:"from-lime-500 to-green-600" },
-    { id:"western",     emoji:"🌅", name:"Western Day Tours",    desc:"Betania sacred village, Kimony beach, Avenue of Baobabs sunset photography",                     image:"https://i.ibb.co/5xXLDSZQ/20250729-173834.jpg",     tours:"1 tour available",  from:"145€", gradient:"from-rose-500 to-pink-600" },
+    { id:"tsiribihina", emoji:"🚣", name:"Tsiribihina River",   desc:"3 to 8-day pirogue descents through sacred Sakalava villages, wild camping on remote sandbanks", image:"https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_600/v1779706626/20250810-063819_fnm8kk.jpg",    tours:"5 tours available", from:"529€", gradient:"from-blue-500 to-cyan-600" },
+    { id:"andasibe",    emoji:"🦎", name:"Andasibe Rainforest",  desc:"Indri lemurs, Mantadia National Park, night walks through misty rainforest trails",              image:"https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_600/v1779706685/IMG-20251030-WA0087_j5biln.jpg", tours:"4 tours available", from:"996€", gradient:"from-green-500 to-emerald-600" },
+    { id:"tsingy",      emoji:"⛰️", name:"Tsingy de Bemaraha",  desc:"UNESCO stone forest with harnesses, suspension bridges, razor-sharp limestone pinnacles",         image:"https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_600/v1779706728/20250817-104453_pfnnk6.jpg",     tours:"2 tours available", from:"369€", gradient:"from-orange-500 to-amber-600" },
+    { id:"kirindy",     emoji:"🌳", name:"Kirindy Forest",       desc:"Fossa sightings, nocturnal lemurs, dry forest wildlife in Madagascar's apex predator territory",  image:"https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_600/v1779706764/IMG-20251030-WA0008_uki3cp.jpg", tours:"2 tours available", from:"191€", gradient:"from-lime-500 to-green-600" },
+    { id:"western",     emoji:"🌅", name:"Western Day Tours",    desc:"Betania sacred village, Kimony beach, Avenue of Baobabs sunset photography",                     image:"https://res.cloudinary.com/dloqrnvp8/image/upload/q_auto/f_auto/w_600/v1779706798/20250729-173834_pph21f.jpg",     tours:"1 tour available",  from:"145€", gradient:"from-rose-500 to-pink-600" },
   ];
 
   const [customForm, setCustomForm] = useState({ name:"", dates:"", group:"", interests:"", budget:"" });
@@ -369,9 +368,11 @@ function TourCategories() {
           {categories.map((cat, i) => (
             <Reveal key={cat.id} delay={i * 0.09}>
               <div className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full flex flex-col">
-                <div className="relative h-56 overflow-hidden flex-shrink-0">
+                {/* ✅ FIX CLS — aspect-ratio sur container image */}
+                <div className="relative overflow-hidden flex-shrink-0" style={{ aspectRatio: "16/9" }}>
                   <img src={cat.image} alt={`${cat.name} Madagascar tour`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    width="600" height="338"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy" decoding="async" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   <div className={`absolute top-4 left-4 w-14 h-14 rounded-2xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center text-3xl shadow-xl`} aria-hidden="true">
@@ -467,7 +468,7 @@ function TourCategories() {
                 <div className="flex gap-2">
                   <button onClick={sendCustomTour} aria-label="Send custom tour request via WhatsApp"
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-green-900 text-sm hover:scale-105 active:scale-95 transition-all duration-300"
-                    style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", fontFamily: sans, boxShadow: "0 4px 20px rgba(250,204,21,0.3)" }}>
+                    style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", fontFamily: sans }}>
                     <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current flex-shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a9.87 9.87 0 00-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                     WhatsApp
                   </button>
@@ -528,7 +529,7 @@ function WhyUs() {
             <Reveal key={i} delay={i * 0.08}>
               <div className="rounded-2xl p-6 border border-white/10 hover:border-yellow-400/40 group transition-all duration-300 h-full"
                 style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(12px)" }}>
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">{w.emoji}</div>
+                <div className="text-4xl mb-4" aria-hidden="true">{w.emoji}</div>
                 <h3 className="text-white font-black text-lg mb-2" style={{ fontFamily: serif }}>{w.title}</h3>
                 <p className="text-green-200 text-sm leading-relaxed" style={{ fontFamily: sans }}>{w.desc}</p>
               </div>
@@ -555,7 +556,7 @@ function HowItWorks() {
             {howItWorks.map((step, i) => (
               <Reveal key={i} delay={i * 0.1}>
                 <div className="relative flex flex-col items-center text-center group h-full">
-                  <div className="relative z-10 w-32 h-32 rounded-3xl flex flex-col items-center justify-center mb-6 shadow-xl group-hover:scale-110 group-hover:shadow-2xl transition-all duration-400"
+                  <div className="relative z-10 w-32 h-32 rounded-3xl flex flex-col items-center justify-center mb-6 shadow-xl group-hover:scale-110 group-hover:shadow-2xl transition-all duration-300"
                     style={{ background: `linear-gradient(135deg,${step.bg},white)`, border: `2px solid ${step.color}22` }}>
                     <span className="text-4xl mb-1" aria-hidden="true">{step.emoji}</span>
                     <span className="text-xs font-black tracking-widest" style={{ color: step.color, fontFamily: sans }}>STEP {step.step}</span>
@@ -571,7 +572,7 @@ function HowItWorks() {
           <button onClick={() => wa("Hello KiriTour! I'd like to start planning my trip.")}
             aria-label="Start planning your Madagascar trip via WhatsApp"
             className="inline-flex items-center gap-3 px-10 py-5 rounded-full font-black text-white text-base shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300"
-            style={{ background: "linear-gradient(135deg,#14532d,#16a34a)", boxShadow: "0 8px 40px rgba(20,83,45,.35)", fontFamily: sans }}>
+            style={{ background: "linear-gradient(135deg,#14532d,#16a34a)", fontFamily: sans }}>
             📲 Start Planning Now — It's Free
           </button>
           <p className="text-gray-400 text-xs mt-3" style={{ fontFamily: sans }}>No commitment. Response within 2 hours. 🇲🇬</p>
@@ -609,7 +610,7 @@ function CTA() {
           <button onClick={() => wa("Hello KiriTour! I'd like to plan my trip.")}
             aria-label="Book your Madagascar tour via WhatsApp"
             className="px-10 py-5 rounded-full font-black text-green-900 text-lg hover:scale-105 active:scale-95 transition-all duration-300"
-            style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", boxShadow: "0 0 40px rgba(250,204,21,.4)", fontFamily: sans }}>
+            style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", fontFamily: sans }}>
             📲 Book via WhatsApp
           </button>
           <a href="mailto:infokiritourmadagascar@gmail.com" aria-label="Send email to KiriTour Madagascar"
@@ -632,7 +633,7 @@ function CTA() {
           ))}
         </div>
         <div className="flex flex-wrap gap-6 justify-center text-green-300 text-sm" style={{ fontFamily: sans }}>
-          <a href={`https://wa.me/${WA}`} target="_blank" rel="noopener noreferrer" aria-label="Call KiriTour Madagascar on WhatsApp"
+          <a href={`https://wa.me/${WA}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp KiriTour"
             className="flex items-center gap-2 hover:text-yellow-400 transition-colors">📱 +261 33 664 07 77</a>
           <span className="flex items-center gap-2">📍 Morondava, Madagascar</span>
           <span className="flex items-center gap-2">⭐ 4.4/5 · Google Maps</span>
@@ -661,12 +662,7 @@ export default function Home() {
         <CTA />
       </div>
       <style>{`
-        @keyframes hero-kb { from { transform: scale(1.09); } to { transform: scale(1); } }
-        @keyframes capcut-char {
-          0%   { opacity: 0; transform: translateY(110%) skewY(6deg); filter: blur(8px); }
-          60%  { filter: blur(0); }
-          100% { opacity: 1; transform: translateY(0) skewY(0deg); filter: blur(0); }
-        }
+        @keyframes hero-kb { from { transform: scale(1.04); } to { transform: scale(1); } }
         @keyframes capcut-scan {
           0%   { transform: translateX(-105%); opacity: 0; }
           8%   { opacity: 1; }
@@ -674,7 +670,7 @@ export default function Home() {
           100% { transform: translateX(105%); opacity: 0; }
         }
         @keyframes hero-fade-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes hero-fade-up   { from { opacity: 0; transform: translateY(24px);  } to { opacity: 1; transform: translateY(0); } }
+        @keyframes hero-fade-up   { from { opacity: 0; transform: translateY(20px);  } to { opacity: 1; transform: translateY(0); } }
         @keyframes btn-shimmer    { 0% { transform: translateX(-220%); } 100% { transform: translateX(220%); } }
         @keyframes live-dot       { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(.65); } }
         @keyframes scroll-bar     { 0% { transform: translateY(-100%); } 100% { transform: translateY(290%); } }
