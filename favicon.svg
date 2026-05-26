@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="120" fill="#0c1a2e"/>
+  
+  <!-- Outer ring -->
+  <circle cx="256" cy="248" r="195" fill="none" stroke="#facc15" stroke-width="12"/>
+  <!-- Inner ring subtle -->
+  <circle cx="256" cy="248" r="178" fill="none" stroke="#facc15" stroke-width="3" opacity="0.25"/>
+  <!-- Fill subtle -->
+  <circle cx="256" cy="248" r="170" fill="#facc15" opacity="0.05"/>
+
+  <!-- Sun -->
+  <circle cx="256" cy="108" r="22" fill="#facc15"/>
+  <!-- Sun rays -->
+  <line x1="256" y1="78" x2="256" y2="62" stroke="#facc15" stroke-width="8" stroke-linecap="round"/>
+  <line x1="288" y1="88" x2="300" y2="74" stroke="#facc15" stroke-width="8" stroke-linecap="round"/>
+  <line x1="224" y1="88" x2="212" y2="74" stroke="#facc15" stroke-width="8" stroke-linecap="round"/>
+  <line x1="302" y1="108" x2="320" y2="108" stroke="#facc15" stroke-width="8" stroke-linecap="round"/>
+  <line x1="210" y1="108" x2="192" y2="108" stroke="#facc15" stroke-width="8" stroke-linecap="round"/>
+  <line x1="294" y1="128" x2="308" y2="140" stroke="#facc15" stroke-width="6" stroke-linecap="round"/>
+  <line x1="218" y1="128" x2="204" y2="140" stroke="#facc15" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Tsingy peaks -->
+  <polyline 
+    points="96,360 128,238 158,318 180,192 202,270 220,165 238,252 256,140 274,248 292,168 310,268 332,195 354,315 384,240 416,360"
+    fill="none" stroke="#facc15" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Ground -->
+  <line x1="96" y1="360" x2="416" y2="360" stroke="#facc15" stroke-width="8" opacity="0.7"/>
+  <!-- Peak fill subtle -->
+  <polygon 
+    points="96,360 128,238 158,318 180,192 202,270 220,165 238,252 256,140 274,248 292,168 310,268 332,195 354,315 384,240 416,360"
+    fill="#facc15" opacity="0.07"/>
+
+  <!-- KIRITOUR text -->
+  <text x="256" y="430" text-anchor="middle" 
+    font-family="Georgia,serif" font-size="52" font-weight="900" 
+    fill="white" letter-spacing="8">KIRITOUR</text>
+  
+  <!-- Dividers -->
+  <line x1="96" y1="443" x2="190" y2="443" stroke="#facc15" stroke-width="2" opacity="0.5"/>
+  <line x1="322" y1="443" x2="416" y2="443" stroke="#facc15" stroke-width="2" opacity="0.5"/>
+  <text x="256" y="443" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#facc15">✦</text>
+
+  <!-- MADAGASCAR text -->
+  <text x="256" y="472" text-anchor="middle"
+    font-family="Arial,sans-serif" font-size="28" font-weight="400"
+    fill="#facc15" letter-spacing="10">MADAGASCAR</text>
+</svg>
