@@ -163,7 +163,7 @@ function Hero() {
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.55) 100%)" }} />
 
-      <div className="absolute inset-0 flex flex-col items-start justify-center px-6 md:px-16 z-30 text-left max-w-4xl mx-auto">
+      <div className="absolute inset-0 flex flex-col items-start justify-center px-6 md:px-12 lg:px-16 z-30 text-left" style={{ maxWidth: "55%" }}>
         <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 backdrop-blur-md mb-6 w-fit"
           style={{ background: "rgba(255,255,255,.08)", animation: armed ? "hero-fade-down .7s ease .1s both" : "none" }}>
           <span className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" style={{ animation: "live-dot 2s ease-in-out infinite" }} />
