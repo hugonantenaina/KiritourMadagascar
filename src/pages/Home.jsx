@@ -163,7 +163,7 @@ function Hero() {
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.55) 100%)" }} />
 
-      <div className="absolute inset-0 flex flex-col items-center md:items-start justify-center px-6 md:px-16 z-30 text-center md:text-left max-w-4xl mx-auto">
+      <div className="absolute inset-0 flex flex-col items-start justify-center px-6 md:px-16 z-30 text-left max-w-4xl mx-auto">
         <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 backdrop-blur-md mb-6 w-fit"
           style={{ background: "rgba(255,255,255,.08)", animation: armed ? "hero-fade-down .7s ease .1s both" : "none" }}>
           <span className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" style={{ animation: "live-dot 2s ease-in-out infinite" }} />
@@ -205,13 +205,13 @@ function Hero() {
           style={{ animation: armed ? "hero-fade-up .8s ease 1.4s both" : "none" }}>
           <button onClick={() => wa("Hello KiriTour! I'd like to book a tour.")}
             aria-label="Book your Madagascar tour via WhatsApp"
-            className="relative overflow-hidden px-9 py-4 rounded-full font-black text-green-900 text-base hover:scale-105 active:scale-95 transition-transform duration-300 w-full sm:w-auto text-center"
+            className="relative overflow-hidden px-9 py-4 rounded-full font-black text-green-900 text-base hover:scale-105 active:scale-95 transition-transform duration-300 w-72 sm:w-auto"
             style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", boxShadow: "0 0 40px rgba(250,204,21,.45)", fontFamily: sans }}>
             <span className="relative z-10">📲 Book Your Adventure</span>
           </button>
           <button onClick={() => document.getElementById("tours-section")?.scrollIntoView({ behavior: "smooth" })}
             aria-label="Explore our Madagascar tours"
-            className="px-9 py-4 rounded-full font-semibold text-white border-2 border-white/25 backdrop-blur-sm hover:bg-white/12 hover:scale-105 active:scale-95 transition-all duration-300 text-base w-full sm:w-auto text-center"
+            className="px-9 py-4 rounded-full font-semibold text-white border-2 border-white/25 backdrop-blur-sm hover:bg-white/12 hover:scale-105 active:scale-95 transition-all duration-300 text-base w-72 sm:w-auto"
             style={{ fontFamily: sans }}>
             Explore Tours ↓
           </button>
