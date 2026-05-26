@@ -163,7 +163,7 @@ function Hero() {
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.55) 100%)" }} />
 
-      <div className="absolute inset-0 flex flex-col items-start justify-center px-8 md:px-16 z-10 text-left max-w-4xl">
+      <div className="absolute inset-0 flex flex-col items-center md:items-start justify-center px-6 md:px-16 z-10 text-center md:text-left max-w-4xl mx-auto">
         <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 backdrop-blur-md mb-6 w-fit"
           style={{ background: "rgba(255,255,255,.08)", animation: armed ? "hero-fade-down .7s ease .1s both" : "none" }}>
           <span className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" style={{ animation: "live-dot 2s ease-in-out infinite" }} />
@@ -174,26 +174,26 @@ function Hero() {
 
         <div className="relative mb-[2px]">
           <ScanLine delay={0.28} />
-          <h1 style={{ fontFamily: serif, fontSize: "clamp(2.8rem,7vw,7rem)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-.03em", color: "#fff", textShadow: "0 4px 60px rgba(0,0,0,.7)" }}>
+          <h1 style={{ fontFamily: serif, fontSize: "clamp(2rem,6vw,7rem)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-.03em", color: "#fff", textShadow: "0 4px 60px rgba(0,0,0,.7)" }}>
             {armed && <AnimChars text="See Madagascar." baseDelay={0.32} />}
           </h1>
         </div>
         <div className="relative mb-[2px]">
           <ScanLine delay={0.72} />
-          <h1 style={{ fontFamily: serif, fontSize: "clamp(2.8rem,7vw,7rem)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-.03em", color: "#fff", textShadow: "0 4px 60px rgba(0,0,0,.7)" }}>
+          <h1 style={{ fontFamily: serif, fontSize: "clamp(2rem,6vw,7rem)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-.03em", color: "#fff", textShadow: "0 4px 60px rgba(0,0,0,.7)" }}>
             {armed && <AnimChars text="Feel the Wild." baseDelay={0.56} />}
           </h1>
         </div>
         <div className="relative mb-9">
           <ScanLine delay={1.14} />
-          <h1 style={{ fontFamily: serif, fontSize: "clamp(2.8rem,7vw,7rem)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-.03em", textShadow: "0 0 60px rgba(250,204,21,.5),0 4px 30px rgba(0,0,0,.8)" }}>
+          <h1 style={{ fontFamily: serif, fontSize: "clamp(2rem,6vw,7rem)", fontWeight: 900, lineHeight: 0.92, letterSpacing: "-.03em", textShadow: "0 0 60px rgba(250,204,21,.5),0 4px 30px rgba(0,0,0,.8)" }}>
             {armed && <AnimChars text="Book Now." baseDelay={0.76} color="#facc15" />}
           </h1>
         </div>
 
         <div style={{ animation: armed ? "hero-fade-up .8s ease 1.2s both" : "none" }}>
-          <p className="text-white/65 text-sm md:text-base max-w-sm mb-2 text-left" style={{ fontFamily: sans }}>{slides[cur].sub}</p>
-          <p className="text-white/35 text-xs mb-10 flex items-center justify-start gap-1.5">
+          <p className="text-white/65 text-sm md:text-base max-w-sm mb-2 text-center md:text-left mx-auto md:mx-0" style={{ fontFamily: sans }}>{slides[cur].sub}</p>
+          <p className="text-white/35 text-xs mb-10 flex items-center justify-center md:justify-start gap-1.5">
             <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-yellow-400/60" aria-hidden="true">
               <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
             </svg>
@@ -201,17 +201,17 @@ function Hero() {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-start"
+        <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start w-full sm:w-auto"
           style={{ animation: armed ? "hero-fade-up .8s ease 1.4s both" : "none" }}>
           <button onClick={() => wa("Hello KiriTour! I'd like to book a tour.")}
             aria-label="Book your Madagascar tour via WhatsApp"
-            className="relative overflow-hidden px-9 py-4 rounded-full font-black text-green-900 text-base hover:scale-105 active:scale-95 transition-transform duration-300"
+            className="relative overflow-hidden px-9 py-4 rounded-full font-black text-green-900 text-base hover:scale-105 active:scale-95 transition-transform duration-300 w-full sm:w-auto text-center"
             style={{ background: "linear-gradient(135deg,#facc15,#f59e0b)", boxShadow: "0 0 40px rgba(250,204,21,.45)", fontFamily: sans }}>
             <span className="relative z-10">📲 Book Your Adventure</span>
           </button>
           <button onClick={() => document.getElementById("tours-section")?.scrollIntoView({ behavior: "smooth" })}
             aria-label="Explore our Madagascar tours"
-            className="px-9 py-4 rounded-full font-semibold text-white border-2 border-white/25 backdrop-blur-sm hover:bg-white/12 hover:scale-105 active:scale-95 transition-all duration-300 text-base"
+            className="px-9 py-4 rounded-full font-semibold text-white border-2 border-white/25 backdrop-blur-sm hover:bg-white/12 hover:scale-105 active:scale-95 transition-all duration-300 text-base w-full sm:w-auto text-center"
             style={{ fontFamily: sans }}>
             Explore Tours ↓
           </button>
@@ -243,7 +243,7 @@ function Hero() {
 function About() {
   return (
     <section className="py-20 px-4 bg-white" id="about">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 items-center">
         <Reveal delay={0}>
           <p className="text-yellow-600 text-xs font-bold tracking-widest uppercase mb-3" style={{ fontFamily: sans }}>About KiriTour</p>
           <h2 style={{ fontFamily: serif, fontSize: "clamp(1.9rem,3.5vw,2.8rem)", lineHeight: 1.15, color: "#14532d" }} className="font-black mb-5">
@@ -600,13 +600,13 @@ function CTA() {
           🌴 Madagascar Tour Specialists — 3 ans d'expérience
         </span>
         <h2 className="text-white font-black leading-none mb-6"
-          style={{ fontFamily: serif, fontSize: "clamp(2.5rem,7vw,5.5rem)", letterSpacing: "-.02em" }}>
+          style={{ fontFamily: serif, fontSize: "clamp(1.8rem,6vw,5.5rem)", letterSpacing: "-.02em" }}>
           Your Adventure<br /><em style={{ color: "#facc15" }}>Starts Here.</em>
         </h2>
         <p className="text-green-200 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: sans }}>
           Contact us via WhatsApp and receive a personalised itinerary within 2 hours. No hidden fees. No bots. Just real people who love Madagascar.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
+        <div className="flex flex-col xs:flex-row sm:flex-row gap-4 justify-center mb-14 w-full px-2 sm:px-0">
           <button onClick={() => wa("Hello KiriTour! I'd like to plan my trip.")}
             aria-label="Book your Madagascar tour via WhatsApp"
             className="px-10 py-5 rounded-full font-black text-green-900 text-lg hover:scale-105 active:scale-95 transition-all duration-300"
@@ -650,10 +650,10 @@ export default function Home() {
       <div className="min-h-screen" style={{ fontFamily: sans }}>
         <Hero />
         <AnimatedStats />
+        <TourCategories />
         <About />
         <GoogleReviewsSection />
         <Wildlife />
-        <TourCategories />
         <BookingCalendar />
         <WhyUs />
         <HowItWorks />
@@ -675,10 +675,22 @@ export default function Home() {
         @keyframes live-dot       { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(.65); } }
         @keyframes scroll-bar     { 0% { transform: translateY(-100%); } 100% { transform: translateY(290%); } }
         @keyframes scroll-chevron { 0%, 100% { transform: translateY(0); opacity: 0.7; } 50% { transform: translateY(5px); opacity: 1; } }
+        /* ── Mobile responsive ── */
         @media (max-width: 640px) {
-          section.py-24 { padding-top: 4rem !important; padding-bottom: 4rem !important; }
-          section.py-20 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+          section.py-24 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+          section.py-20 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+          section.py-16 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
         }
+        /* ── Ensure hero text readable on small phones ── */
+        @media (max-width: 380px) {
+          .hero-h1 { font-size: 2rem !important; }
+        }
+        /* ── Touch targets minimum 44px ── */
+        button, a[role="button"] {
+          min-height: 44px;
+        }
+        /* ── Prevent horizontal scroll ── */
+        html, body { overflow-x: hidden; max-width: 100vw; }
       `}</style>
     </>
   );

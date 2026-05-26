@@ -8,27 +8,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor:   ['react', 'react-dom'],
-          router:   ['react-router-dom'],
+          vendor: ['react', 'react-dom', 'react-router-dom'],
           firebase: ['firebase/app', 'firebase/auth'],
-          toast:    ['react-toastify'],
-          onesignal:['react-onesignal'],
         }
       }
     },
-    chunkSizeWarningLimit: 600,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,   // ✅ retire console.log production
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.warn'],
-      },
-    },
-    cssCodeSplit: true,
-    sourcemap: false,
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
-  },
+    chunkSizeWarningLimit: 1000,
+  }
 })
