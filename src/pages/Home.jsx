@@ -163,7 +163,7 @@ function Hero() {
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.55) 100%)" }} />
 
-      <div className="absolute inset-0 flex flex-col items-center md:items-start justify-center px-6 md:px-16 z-10 text-center md:text-left max-w-4xl mx-auto">
+      <div className="absolute inset-0 flex flex-col items-center md:items-start justify-center px-6 md:px-16 z-30 text-center md:text-left max-w-4xl mx-auto">
         <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 backdrop-blur-md mb-6 w-fit"
           style={{ background: "rgba(255,255,255,.08)", animation: armed ? "hero-fade-down .7s ease .1s both" : "none" }}>
           <span className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" style={{ animation: "live-dot 2s ease-in-out infinite" }} />
@@ -224,10 +224,10 @@ function Hero() {
       ].map(([pos, chr, label, fn], i) => (
         <button key={i} onClick={() => setCur(fn)} aria-label={label}
           className={`absolute ${pos} top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center text-white text-xl border border-white/10 transition-all hover:bg-white/18`}
-          style={{ background: "rgba(0,0,0,.38)" }}>{chr}</button>
+          style={{ background: "rgba(0,0,0,.38)", zIndex: 10 }}>{chr}</button>
       ))}
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2" role="tablist" aria-label="Slide navigation">
+      <div className="lg:hidden absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex gap-2" role="tablist" aria-label="Slide navigation">
         {slides.map((s, i) => (
           <button key={i} onClick={() => setCur(i)}
             role="tab" aria-selected={i === cur} aria-label={`Show slide: ${s.label}`}
