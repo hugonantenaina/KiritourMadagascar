@@ -4,16 +4,14 @@
   <meta charset="utf-8">
   <title>KiriTour Madagascar</title>
   <script>
+    // GitHub Pages SPA — mitahiry ny path → index.html mamerina azy
     var l = window.location;
     var path = l.pathname;
     var search = l.search;
     var hash = l.hash;
-    
-    // Redirect to home with path preserved
-    var redirect = l.protocol + '//' + l.hostname + 
-      (l.port ? ':' + l.port : '') + 
-      '/' + '?redirect=' + encodeURIComponent(path + search + hash);
-    
+    var redirect = l.protocol + '//' + l.hostname +
+      (l.port ? ':' + l.port : '') +
+      '/?redirect=' + encodeURIComponent(path + search + hash);
     l.replace(redirect);
   </script>
 </head>
