@@ -5,11 +5,14 @@ import {
   FaHome, FaWhatsapp, FaSignOutAlt, FaSignInAlt,
   FaUserPlus, FaTimes, FaCompass, FaImage,
   FaMapMarkedAlt, FaHotel, FaEnvelope, FaQuestionCircle,
-  FaFileContract, FaShieldAlt, FaClipboardList,
+  FaFileContract,
+  FaShieldAlt,
+  FaClipboardList,
 } from "react-icons/fa";
 
-const HEADER_H = 64; // px — hauteur fixe header
-
+/* ════════════════════════════════════════════════════════════
+   HEADER — Professional · All English · Inline desktop nav
+════════════════════════════════════════════════════════════ */
 const Header = () => {
   const [user, setUser]           = useState(null);
   const [authLoading, setLoading] = useState(true);
@@ -19,23 +22,26 @@ const Header = () => {
   const location  = useLocation();
   const drawerRef = useRef(null);
 
+  /* ── Auth ── */
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => { setUser(u || null); setLoading(false); });
     return unsub;
   }, []);
 
+  /* ── Scroll shadow ── */
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 16);
-    fn();
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
+  /* ── Body lock ── */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
+  /* ── Outside click ── */
   useEffect(() => {
     const fn = (e) => {
       if (menuOpen && drawerRef.current && !drawerRef.current.contains(e.target))
@@ -45,11 +51,12 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", fn);
   }, [menuOpen]);
 
+  /* ── Scroll helpers ── */
   const getAbsTop = (el) => { let t = 0; while (el) { t += el.offsetTop || 0; el = el.offsetParent; } return t; };
   const scrollToId = (id) => {
     const el = document.getElementById(id);
     if (!el) return;
-    window.scrollTo({ top: Math.max(0, getAbsTop(el) - HEADER_H), behavior: "smooth" });
+    window.scrollTo({ top: Math.max(0, getAbsTop(el) - 68), behavior: "smooth" });
   };
   const goScroll = (id) => {
     setMenuOpen(false);
@@ -67,10 +74,10 @@ const Header = () => {
     setMenuOpen(false);
   };
 
-  const close    = () => setMenuOpen(false);
+  const close  = () => setMenuOpen(false);
   const isActive = (p) => location.pathname === p;
-  const isHome   = location.pathname === "/" || location.pathname === "/home";
 
+  /* ── Avatar ── */
   const Avatar = ({ size = "sm" }) => (
     <div className={`${size === "sm" ? "w-8 h-8" : "w-10 h-10"} rounded-full overflow-hidden border-2 border-yellow-400 flex-shrink-0 flex items-center justify-center`}
       style={{ background: "linear-gradient(135deg,#14532d,#166534)" }}>
@@ -81,6 +88,7 @@ const Header = () => {
     </div>
   );
 
+  /* ── Shared link style helpers ── */
   const lnkCls = (path) =>
     `relative flex items-center gap-1.5 text-[13px] font-semibold tracking-wide transition-colors duration-200 group whitespace-nowrap
      ${isActive(path) ? "text-yellow-400" : "text-white/85 hover:text-yellow-300"}`;
@@ -92,37 +100,23 @@ const Header = () => {
 
   const btnNavCls = `relative flex items-center gap-1.5 text-[13px] font-semibold tracking-wide transition-colors duration-200 group whitespace-nowrap text-white/85 hover:text-yellow-300 cursor-pointer`;
 
-  /* ── Background header:
-     - Home + tsy scroll → transparent (mifanaraka amin'ny hero)
-     - Home + scrolled   → dark green
-     - Tsy Home          → dark green hatrany
-  ── */
-  const headerBg = isHome && !scrolled
-    ? "rgba(0,0,0,0)"
-    : "linear-gradient(135deg,#0d3318 0%,#14532d 50%,#0d3318 100%)";
-
-  const headerShadow = (!isHome || scrolled)
-    ? "0 4px 32px rgba(0,0,0,.6)"
-    : "none";
-
   return (
     <>
-      {/* ══ FIXED HEADER ═══════════════════════════════════════ */}
+      {/* ══ NAVBAR ═══════════════════════════════════════════ */}
       <header
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-400"
+        className="sticky top-0 z-50 transition-all duration-400"
         style={{
-          background: headerBg,
-          boxShadow: headerShadow,
-          height: HEADER_H,
+          background: scrolled
+            ? "linear-gradient(135deg,#0d3318 0%,#14532d 50%,#0d3318 100%)"
+            : "linear-gradient(135deg,#14532d 0%,#166534 35%,#15803d 55%,#166534 75%,#14532d 100%)",
+          boxShadow: scrolled ? "0 4px 32px rgba(0,0,0,.6)" : "0 2px 14px rgba(0,0,0,.3)",
         }}>
 
-        {/* Top gold line — visible only when scrolled */}
-        {(scrolled || !isHome) && (
-          <div className="h-[2px] w-full"
-            style={{ background: "linear-gradient(90deg,transparent,#facc15 25%,#f59e0b 50%,#facc15 75%,transparent)", opacity: .75 }} />
-        )}
+        {/* Top gold line */}
+        <div className="h-[2px] w-full"
+          style={{ background: "linear-gradient(90deg,transparent,#facc15 25%,#f59e0b 50%,#facc15 75%,transparent)", opacity: .75 }} />
 
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 flex items-center h-full gap-4 lg:gap-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 flex items-center h-[62px] gap-4 lg:gap-6">
 
           {/* ── Logo ── */}
           <Link to="/home" onClick={close}
@@ -142,10 +136,12 @@ const Header = () => {
             </div>
           </Link>
 
+          {/* ── Separator ── */}
           <div className="hidden md:block h-7 w-px bg-white/15 flex-shrink-0" />
 
-          {/* ── Desktop Nav ── */}
+          {/* ── Desktop Nav — all items inline ── */}
           <nav className="hidden md:flex items-center gap-5 lg:gap-6 flex-1">
+            {/* Page links */}
             <Link to="/home"    className={lnkCls("/home")}>
               <FaHome    size={11} className="opacity-60 flex-shrink-0" /> Home    <Underline path="/home" />
             </Link>
@@ -155,6 +151,8 @@ const Header = () => {
             <Link to="/about"   className={lnkCls("/about")}>
               <FaImage   size={11} className="opacity-60 flex-shrink-0" /> Gallery <Underline path="/about" />
             </Link>
+
+            {/* Scroll buttons */}
             <button onClick={() => goScroll("hotel-section")} className={btnNavCls}>
               <FaHotel      size={11} className="opacity-60 flex-shrink-0" /> Hotel
               <span className="absolute -bottom-1 left-0 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 to-yellow-200 w-0 group-hover:w-full transition-all duration-300" />
@@ -163,28 +161,30 @@ const Header = () => {
               <FaMapMarkedAlt size={11} className="opacity-60 flex-shrink-0" /> Map
               <span className="absolute -bottom-1 left-0 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 to-yellow-200 w-0 group-hover:w-full transition-all duration-300" />
             </button>
+
+            {/* Contact page link */}
             <Link to="/contact" className={lnkCls("/contact")}>
               <FaEnvelope size={11} className="opacity-60 flex-shrink-0" /> Contact <Underline path="/contact" />
             </Link>
             <Link to="/faq" className={lnkCls("/faq")}>
               <FaQuestionCircle size={11} className="opacity-60 flex-shrink-0" /> FAQ <Underline path="/faq" />
             </Link>
+
             {/* Legal dropdown */}
             <div className="relative group">
               <button className={btnNavCls}>
                 <FaFileContract size={11} className="opacity-60 flex-shrink-0" /> Legal
-                <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-all group-hover:rotate-180 duration-200">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"/>
-                </svg>
+                <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-all group-hover:rotate-180 duration-200"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
                 <span className="absolute -bottom-1 left-0 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 to-yellow-200 w-0 group-hover:w-full transition-all duration-300" />
               </button>
+              {/* Dropdown */}
               <div className="absolute top-full left-0 mt-3 w-52 rounded-2xl overflow-hidden shadow-2xl border border-white/10 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 translate-y-1 group-hover:translate-y-0 z-50"
                 style={{ background: "linear-gradient(135deg,#0d3318,#14532d)" }}>
                 <div className="p-1.5 space-y-0.5">
                   {[
-                    { to:"/privacy",            icon:<FaShieldAlt />,     label:"Privacy Policy"     },
-                    { to:"/terms",              icon:<FaFileContract />,  label:"Terms & Conditions" },
-                    { to:"/booking-conditions", icon:<FaClipboardList />, label:"Booking Conditions" },
+                    { to:"/privacy",            icon:<FaShieldAlt />,      label:"Privacy Policy"      },
+                    { to:"/terms",              icon:<FaFileContract />,   label:"Terms & Conditions"  },
+                    { to:"/booking-conditions", icon:<FaClipboardList />,  label:"Booking Conditions"  },
                   ].map((item) => (
                     <Link key={item.to} to={item.to}
                       className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-white/80 hover:text-yellow-400 hover:bg-white/8 transition-all">
@@ -197,7 +197,7 @@ const Header = () => {
             </div>
           </nav>
 
-          {/* ── Auth desktop ── */}
+          {/* ── Auth — desktop ── */}
           <div className="hidden md:flex items-center gap-2.5 flex-shrink-0 ml-auto">
             {!authLoading && (user ? (
               <>
@@ -238,16 +238,10 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Bottom line */}
-        {(scrolled || !isHome) && (
-          <div className="h-px w-full"
-            style={{ background: "linear-gradient(90deg,transparent,rgba(74,222,128,.25),transparent)" }} />
-        )}
+        {/* Bottom green line */}
+        <div className="h-px w-full"
+          style={{ background: "linear-gradient(90deg,transparent,rgba(74,222,128,.25),transparent)" }} />
       </header>
-
-      {/* ══ SPACER — tsy Home fotsiny ══ */}
-      {/* Home page: Hero covers full screen, tsy mila spacer */}
-      {!isHome && <div style={{ height: HEADER_H }} aria-hidden="true" />}
 
       {/* ══ OVERLAY ══ */}
       <div onClick={close}
@@ -266,6 +260,7 @@ const Header = () => {
 
         <div className="h-1 w-full" style={{ background: "linear-gradient(90deg,#facc15,#f59e0b,#facc15)" }} />
 
+        {/* Drawer top */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4">
           <Link to="/home" onClick={close} className="flex items-center gap-3">
             <div className="relative w-12 h-12">
@@ -285,6 +280,7 @@ const Header = () => {
           </button>
         </div>
 
+        {/* User info */}
         {user && (
           <div className="mx-4 mb-3 flex items-center gap-3 px-4 py-3 rounded-xl border border-white/10 bg-white/5">
             <Avatar size="md" />
@@ -297,16 +293,17 @@ const Header = () => {
 
         <div className="mx-5 h-px mb-2" style={{ background: "linear-gradient(90deg,transparent,rgba(250,204,21,.25),transparent)" }} />
 
+        {/* Nav */}
         <nav className="flex flex-col px-3 gap-0.5 flex-1 overflow-y-auto py-1">
           {[
-            { to: "/home",               icon: <FaHome />,           label: "Home"               },
-            { to: "/tours",              icon: <FaCompass />,        label: "Tours"              },
-            { to: "/about",              icon: <FaImage />,          label: "Gallery"            },
-            { to: "/contact",            icon: <FaEnvelope />,       label: "Contact"            },
-            { to: "/faq",                icon: <FaQuestionCircle />, label: "FAQ"                },
-            { to: "/privacy",            icon: <FaShieldAlt />,      label: "Privacy Policy"     },
-            { to: "/terms",              icon: <FaFileContract />,   label: "Terms & Conditions" },
-            { to: "/booking-conditions", icon: <FaClipboardList />,  label: "Booking Conditions" },
+            { to: "/home",    icon: <FaHome />,           label: "Home"    },
+            { to: "/tours",   icon: <FaCompass />,        label: "Tours"   },
+            { to: "/about",   icon: <FaImage />,          label: "Gallery" },
+            { to: "/contact", icon: <FaEnvelope />,       label: "Contact" },
+            { to: "/faq",     icon: <FaQuestionCircle />, label: "FAQ"     },
+            { to: "/privacy",            icon: <FaShieldAlt />,     label: "Privacy Policy"     },
+            { to: "/terms",              icon: <FaFileContract />,  label: "Terms & Conditions" },
+            { to: "/booking-conditions", icon: <FaClipboardList />, label: "Booking Conditions" },
           ].map((item) => (
             <Link key={item.to} to={item.to} onClick={close}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all
@@ -318,21 +315,26 @@ const Header = () => {
               {isActive(item.to) && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-yellow-400" />}
             </Link>
           ))}
+
+          {/* Scroll items */}
           {[
-            { id: "hotel-section", icon: <FaHotel />,        label: "Hotel" },
+            { id: "hotel-section", icon: <FaHotel />,       label: "Hotel" },
             { id: "map-section",   icon: <FaMapMarkedAlt />, label: "Map"   },
           ].map((item) => (
             <button key={item.id} onClick={() => goScroll(item.id)}
               className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-white/80 hover:bg-white/8 hover:text-yellow-300 border border-transparent transition-all text-left w-full">
               <span className="text-base text-green-300/70">{item.icon}</span>
               {item.label}
-              <span className="ml-auto text-[8px] font-bold tracking-widest uppercase text-yellow-400/45 border border-yellow-400/15 rounded-full px-2 py-0.5">scroll</span>
+              <span className="ml-auto text-[8px] font-bold tracking-widest uppercase text-yellow-400/45 border border-yellow-400/15 rounded-full px-2 py-0.5">
+                scroll
+              </span>
             </button>
           ))}
         </nav>
 
         <div className="mx-5 h-px mt-3 mb-3" style={{ background: "linear-gradient(90deg,transparent,rgba(74,222,128,.2),transparent)" }} />
 
+        {/* Auth */}
         <div className="px-4 pb-5 flex flex-col gap-2">
           {user ? (
             <button onClick={handleLogout}

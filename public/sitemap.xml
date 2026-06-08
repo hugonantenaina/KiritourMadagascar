@@ -1,39 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <!-- ═══ MAIN PAGES ═══ -->
   <url>
-    <loc>https://www.kiritourmadagascar.com/</loc>
+    <loc>https://kiritourmadagascar.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <lastmod>2026-05-16</lastmod>
   </url>
-
   <url>
-    <loc>https://www.kiritourmadagascar.com/tours</loc>
+    <loc>https://kiritourmadagascar.com/tours</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-    <lastmod>2026-05-16</lastmod>
+  </url>
+  <url>
+    <loc>https://kiritourmadagascar.com/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://kiritourmadagascar.com/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://kiritourmadagascar.com/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 
-  <url>
-    <loc>https://www.kiritourmadagascar.com/contact</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2026-05-16</lastmod>
-  </url>
-
-  <url>
-    <loc>https://www.kiritourmadagascar.com/faq</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2026-05-16</lastmod>
-  </url>
-
-  <url>
-    <loc>https://www.kiritourmadagascar.com/about</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-05-16</lastmod>
-  </url>
+  <!-- ═══ TOUR PAGES (SEO slugs) ═══ -->
+  <url><loc>https://kiritourmadagascar.com/tours/tsiribihina-river-3-day-pirogue-descent-madagascar</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/tsiribihina-river-kirindy-forest-4-day-tour</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/western-madagascar-5-day-circuit-baobabs-kirindy</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/tsiribihina-tsingy-bemaraha-6-day-tour-madagascar</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/menabe-grand-tour-8-day-madagascar-adventure</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/andasibe-rainforest-indri-lemurs-3-day-tour</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/andasibe-lemurs-mantadia-4-day-wildlife-tour</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/andasibe-rainforest-5-day-immersion-madagascar</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/andasibe-palmarium-aye-aye-5-day-madagascar</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/tsingy-de-bemaraha-4-day-unesco-kirindy-baobabs</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/tsingy-de-bemaraha-3-day-express-circuit-madagascar</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/kirindy-forest-fossa-lemurs-2-day-safari</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/kirindy-forest-1-day-tour-from-morondava</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kiritourmadagascar.com/tours/avenue-baobabs-betania-kimony-day-tour-morondava</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
 
 </urlset>

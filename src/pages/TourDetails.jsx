@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { tours, UUID_TO_TOUR_ID } from "./Tours";
+import { tours, UUID_TO_TOUR_ID, SLUG_TO_TOUR_ID, TOUR_SLUG_MAP } from "./Tours";
 
 /* ── Google Fonts ─────────────────────────────────────────────── */
 if (typeof document !== "undefined" && !document.getElementById("kt-td-f")) {
@@ -61,7 +61,7 @@ function Icon({ id, size = 20, color = "currentColor" }) {
    MAIN
 ════════════════════════════════════════════════════════════════ */
 export default function TourDetails() {
-  const { id: uuid }  = useParams();
+  const { id: param } = useParams();
   const navigate      = useNavigate();
   const [img, setImg] = useState(0);
   const [day, setDay] = useState(null);
@@ -70,8 +70,93 @@ export default function TourDetails() {
 
   useEffect(() => { window.scrollTo(0, 0); setTimeout(() => setIn(true), 80); }, []);
 
-  const tourId = UUID_TO_TOUR_ID[uuid];
+  /* Resolve tour by SLUG first, then UUID (backwards compat) */
+  const tourId = SLUG_TO_TOUR_ID[param] || UUID_TO_TOUR_ID[param];
   const t = tours.find((x) => x.id === tourId);
+
+  /* ── Redirect UUID → slug (clean URL in browser) ── */
+  useEffect(() => {
+    if (t && UUID_TO_TOUR_ID[param]) {
+      const slug = TOUR_SLUG_MAP[t.id];
+      if (slug && slug !== param) navigate(`/tours/${slug}`, { replace: true });
+    }
+  }, [t, param, navigate]);
+
+  /* ── SEO — title, meta, canonical, Open Graph, JSON-LD ── */
+  useEffect(() => {
+    if (!t) return;
+    const slug  = TOUR_SLUG_MAP[t.id];
+    const url   = `https://kiritourmadagascar.com/tours/${slug}`;
+    const price = (t.pricing?.[0]?.price || t.pricing?.[0]?.range || "").replace(/[^0-9]/g, "");
+    const img0  = t.images?.[0] || "";
+    const title = `${t.title} — ${t.duration} Madagascar Tour | KiriTour`;
+    const desc  = t.desc.slice(0, 155);
+
+    document.title = title;
+
+    const setMeta = (key, val, attr = "name") => {
+      let el = document.querySelector(`meta[${attr}="${key}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+      el.setAttribute("content", val);
+    };
+    setMeta("description", desc);
+    setMeta("og:title", title, "property");
+    setMeta("og:description", desc, "property");
+    setMeta("og:image", img0, "property");
+    setMeta("og:url", url, "property");
+    setMeta("og:type", "website", "property");
+    setMeta("twitter:card", "summary_large_image");
+    setMeta("twitter:title", title);
+    setMeta("twitter:description", desc);
+    setMeta("twitter:image", img0);
+
+    /* canonical */
+    let canon = document.querySelector('link[rel="canonical"]');
+    if (!canon) { canon = document.createElement("link"); canon.rel = "canonical"; document.head.appendChild(canon); }
+    canon.href = url;
+
+    /* JSON-LD TouristTrip */
+    const ld = {
+      "@context": "https://schema.org",
+      "@type": "TouristTrip",
+      "name": t.title,
+      "description": t.desc,
+      "image": t.images,
+      "touristType": "Adventure, Wildlife, Eco-tourism",
+      "url": url,
+      "provider": {
+        "@type": "TravelAgency",
+        "name": "KiriTour Madagascar",
+        "url": "https://kiritourmadagascar.com",
+        "telephone": "+261336640777",
+        "areaServed": "Madagascar",
+        "address": { "@type": "PostalAddress", "addressLocality": "Morondava", "addressCountry": "MG" }
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": price,
+        "priceCurrency": "EUR",
+        "availability": "https://schema.org/InStock",
+        "url": url
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": String(t.rating || 5),
+        "reviewCount": "8",
+        "bestRating": "5"
+      }
+    };
+    let script = document.getElementById("kt-tour-ld");
+    if (!script) { script = document.createElement("script"); script.id = "kt-tour-ld"; script.type = "application/ld+json"; document.head.appendChild(script); }
+    script.textContent = JSON.stringify(ld);
+
+    /* cleanup on unmount */
+    return () => {
+      document.title = "KiriTour Madagascar | Tours Baobabs, Tsingy & Wildlife — Morondava";
+      const s = document.getElementById("kt-tour-ld");
+      if (s) s.remove();
+    };
+  }, [t]);
 
   /* 404 */
   if (!t) return (
@@ -93,58 +178,42 @@ export default function TourDetails() {
     setOk(true); setTimeout(() => setOk(false), 2200);
   };
 
-  /* accent colour per tag */
   const accent = t.tagColor || "#facc15";
 
   return (
     <div style={{ background: "#0b1a0e", minHeight: "100svh", fontFamily: sans }}>
 
-      {/* ══════════════════════════════════════════════════════
-          HERO — full viewport, cinematic
-      ══════════════════════════════════════════════════════ */}
+      {/* ══ HERO ══ */}
       <section className="relative overflow-hidden" style={{ height: "100svh", maxHeight: 800, minHeight: 520 }}>
-
-        {/* Images */}
         {t.images.map((src, i) => (
           <div key={i} className="absolute inset-0 transition-opacity duration-1000" style={{ opacity: img === i ? 1 : 0, zIndex: 0 }}>
-            <img src={src} alt="" onError={(e) => { e.target.src = "https://i.ibb.co/5xXLDSZQ/20250729-173834.jpg"; }}
+            <img src={src} alt={`${t.title} ${i + 1}`} onError={(e) => { e.target.src = "https://i.ibb.co/5xXLDSZQ/20250729-173834.jpg"; }}
               className="w-full h-full object-cover"
               style={{ animation: img === i ? "hero-kb 12s ease-out both" : "none" }} />
           </div>
         ))}
 
-        {/* Layered overlays */}
         <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(to bottom,rgba(3,12,4,.6) 0%,rgba(3,12,4,.05) 35%,rgba(3,12,4,.05) 50%,rgba(3,12,4,.98) 100%)" }} />
         <div className="absolute inset-0 z-[1]" style={{ background: `radial-gradient(ellipse 80% 60% at 50% 100%, ${accent}18 0%, transparent 70%)` }} />
 
-        {/* Grain texture */}
-        <div className="absolute inset-0 z-[2] pointer-events-none opacity-[.06]"
-          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
-
-        {/* ── TOP BAR ── */}
+        {/* TOP BAR */}
         <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 sm:px-7 py-5"
           style={{ opacity: in_ ? 1 : 0, transform: in_ ? "none" : "translateY(-16px)", transition: "opacity .6s ease .1s, transform .6s ease .1s" }}>
-
-          {/* Back */}
           <button onClick={() => navigate("/tours")}
             className="flex items-center gap-2 rounded-full text-sm font-medium transition-all hover:scale-105 active:scale-95"
             style={{ padding: "10px 18px", background: "rgba(255,255,255,.1)", backdropFilter: "blur(14px)", border: "1px solid rgba(255,255,255,.18)", color: "white", fontFamily: sans }}>
             <Icon id="back" size={14} color="white" /> All Tours
           </button>
-
-          {/* Right controls */}
           <div className="flex items-center gap-2">
-            {/* Dots */}
             {t.images.length > 1 && (
               <div className="flex items-center gap-1.5 rounded-full px-3 py-2"
                 style={{ background: "rgba(0,0,0,.35)", backdropFilter: "blur(10px)" }}>
                 {t.images.map((_, i) => (
-                  <button key={i} onClick={() => setImg(i)} className="rounded-full transition-all duration-400"
+                  <button key={i} onClick={() => setImg(i)} aria-label={`Image ${i + 1}`} className="rounded-full transition-all duration-400"
                     style={{ height: 7, width: img === i ? 22 : 7, background: img === i ? accent : "rgba(255,255,255,.35)" }} />
                 ))}
               </div>
             )}
-            {/* Share */}
             <button onClick={copy}
               className="flex items-center gap-2 rounded-full text-xs font-medium transition-all hover:scale-105"
               style={{ padding: "10px 16px", background: ok ? accent : "rgba(255,255,255,.1)", backdropFilter: "blur(14px)", border: "1px solid rgba(255,255,255,.18)", color: ok ? "#14532d" : "white", fontFamily: sans }}>
@@ -154,11 +223,9 @@ export default function TourDetails() {
           </div>
         </div>
 
-        {/* ── HERO CONTENT bottom ── */}
+        {/* HERO CONTENT */}
         <div className="absolute bottom-0 left-0 right-0 z-20 px-4 sm:px-8 pb-10 sm:pb-14">
           <div className="max-w-5xl mx-auto">
-
-            {/* Badges */}
             <div className="flex flex-wrap items-center gap-2 mb-5"
               style={{ opacity: in_ ? 1 : 0, transform: in_ ? "none" : "translateY(20px)", transition: "opacity .7s ease .25s, transform .7s ease .25s" }}>
               <span className="flex items-center gap-1.5 rounded-full text-[11px] font-semibold px-3 py-1.5"
@@ -176,7 +243,6 @@ export default function TourDetails() {
               </span>
             </div>
 
-            {/* Title */}
             <h1 style={{
               fontFamily: serif, fontSize: "clamp(2.2rem, 6vw, 4.5rem)", fontWeight: 700,
               color: "white", lineHeight: 1.05, letterSpacing: "-.02em",
@@ -187,7 +253,6 @@ export default function TourDetails() {
               {t.title}
             </h1>
 
-            {/* Subtitle */}
             <p style={{
               fontFamily: serif, fontSize: "clamp(1rem, 2.5vw, 1.35rem)",
               color: "rgba(255,255,255,.5)", marginTop: 8, fontStyle: "italic",
@@ -197,7 +262,6 @@ export default function TourDetails() {
               {t.subtitle}
             </p>
 
-            {/* Scroll cue — desktop */}
             <div className="hidden sm:flex items-center gap-3 mt-8"
               style={{ opacity: in_ ? .5 : 0, transition: "opacity 1s ease 1.2s" }}>
               <div style={{ width: 1, height: 40, background: "rgba(255,255,255,.3)", borderRadius: 99, overflow: "hidden", position: "relative" }}>
@@ -208,24 +272,20 @@ export default function TourDetails() {
           </div>
         </div>
 
-        {/* Bottom accent line */}
         <div className="absolute bottom-0 left-0 right-0 z-20 h-px"
           style={{ background: `linear-gradient(90deg, transparent, ${accent}60, transparent)` }} />
       </section>
 
-      {/* ══════════════════════════════════════════════════════
-          BODY
-      ══════════════════════════════════════════════════════ */}
+      {/* ══ BODY ══ */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 pb-32 lg:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
 
-          {/* ── LEFT 8 cols ─────────────────────────────────── */}
+          {/* LEFT */}
           <div className="lg:col-span-8 flex flex-col gap-5">
 
-            {/* About card */}
+            {/* About */}
             <R d={0}>
               <div className="rounded-3xl overflow-hidden" style={{ background: "#111f13", border: "1px solid rgba(255,255,255,.07)" }}>
-                {/* coloured top stripe */}
                 <div style={{ height: 3, background: `linear-gradient(90deg, ${accent}, ${t.tagColor || accent}80, transparent)` }} />
                 <div className="p-6 sm:p-8">
                   <div className="flex items-center gap-3 mb-5">
@@ -236,7 +296,6 @@ export default function TourDetails() {
                   </div>
                   <p style={{ fontFamily: sans, fontSize: 15, color: "rgba(255,255,255,.55)", lineHeight: 1.75 }}>{t.desc}</p>
 
-                  {/* Quick stats */}
                   <div className="grid grid-cols-3 gap-3 mt-7 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,.07)" }}>
                     {[
                       { label: "Duration", val: t.duration, icon: "clock" },
@@ -255,25 +314,20 @@ export default function TourDetails() {
               </div>
             </R>
 
-            {/* ══ MOBILE ONLY — Pricing card (same as desktop sidebar) ══ */}
+            {/* MOBILE pricing */}
             <div className="lg:hidden">
               <R d={0.04}>
                 <div className="rounded-3xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,.08)", boxShadow: "0 20px 60px rgba(0,0,0,.4)" }}>
-                  {/* Price header */}
-                  <div className="px-6 py-6 relative overflow-hidden"
-                    style={{ background: "linear-gradient(135deg,#0a2410,#135c2c)" }}>
-                    <div className="absolute inset-0 opacity-[.07]"
-                      style={{ backgroundImage: "radial-gradient(circle at 80% 20%, white 0%, transparent 55%)" }} />
+                  <div className="px-6 py-6 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#0a2410,#135c2c)" }}>
+                    <div className="absolute inset-0 opacity-[.07]" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, white 0%, transparent 55%)" }} />
                     <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.35)", textTransform: "uppercase", letterSpacing: ".35em", marginBottom: 6 }}>Starting from</p>
                     <p style={{ fontFamily: serif, fontSize: "2.6rem", color: accent, fontWeight: 700, lineHeight: 1 }}>{price0}</p>
-                    <p style={{ fontFamily: sans, fontSize: 20, color: "rgba(255,255,255,.3)", marginTop: 6 }}>per person · varies by group</p>
+                    <p style={{ fontFamily: sans, fontSize: 12, color: "rgba(255,255,255,.3)", marginTop: 6 }}>per person · varies by group</p>
                     <div className="flex items-center gap-1 mt-4">
                       {[...Array(5)].map((_, i) => <Icon key={i} id="star" size={12} color={i < t.rating ? "#fbbf24" : "rgba(255,255,255,.15)"} />)}
                       <span style={{ fontFamily: sans, fontSize: 11, color: "rgba(255,255,255,.35)", marginLeft: 6 }}>{t.rating}.0 / 5</span>
                     </div>
                   </div>
-
-                  {/* Pricing options */}
                   <div className="p-4" style={{ background: "#111f13" }}>
                     <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.3)", textTransform: "uppercase", letterSpacing: ".2em", marginBottom: 12 }}>All options</p>
                     <div className="flex flex-col gap-2">
@@ -290,7 +344,6 @@ export default function TourDetails() {
                         );
                       })}
                     </div>
-                    {/* CTA */}
                     <button onClick={() => wa(`Hello KiriTour! I'd like to book: ${t.title} (${t.duration})`)}
                       className="w-full flex items-center justify-center gap-2.5 mt-4 rounded-2xl font-bold transition-all hover:scale-[1.02] active:scale-[.98]"
                       style={{ padding: "16px 24px", background: `linear-gradient(135deg,${accent},#f59e0b)`, color: "#0b1a0e", fontFamily: sans, fontSize: 15, boxShadow: `0 8px 28px ${accent}45` }}>
@@ -299,27 +352,21 @@ export default function TourDetails() {
                     <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.25)", textAlign: "center", marginTop: 10 }}>
                       Reply within 2h · Custom itineraries available
                     </p>
-                    <p style={{ fontFamily: sans, fontSize: 20, color: "rgba(255,255,255,.18)", textAlign: "center", marginTop: 4 }}>
-                      Price varies depending on group size.
-                    </p>
                   </div>
                 </div>
 
-                {/* Share — mobile */}
                 <button onClick={copy}
                   className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[.98] mt-3"
                   style={{ background: ok ? "rgba(74,222,128,.1)" : "rgba(255,255,255,.05)", border: `1.5px solid ${ok ? "rgba(74,222,128,.3)" : "rgba(255,255,255,.08)"}` }}>
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: ok ? "rgba(74,222,128,.15)" : "rgba(255,255,255,.06)" }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: ok ? "rgba(74,222,128,.15)" : "rgba(255,255,255,.06)" }}>
                     <Icon id="share" size={16} color={ok ? "#4ade80" : "rgba(255,255,255,.4)"} />
                   </div>
                   <div className="text-left">
                     <p style={{ fontFamily: sans, fontSize: 13, color: "white", fontWeight: 600 }}>{ok ? "Link copied!" : "Share this tour"}</p>
-                    <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.3)" }}>Unique UUID link</p>
+                    <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.3)" }}>Shareable link</p>
                   </div>
                 </button>
 
-                {/* Help — mobile */}
                 <div className="rounded-2xl p-4 mt-3" style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.06)" }}>
                   <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.3)", textTransform: "uppercase", letterSpacing: ".15em", marginBottom: 12 }}>Need help choosing?</p>
                   <button onClick={() => wa("Hello! I need help choosing the right tour.")}
@@ -331,11 +378,10 @@ export default function TourDetails() {
               </R>
             </div>
 
-            {/* Itinerary accordion */}
+            {/* Itinerary */}
             {t.itinerary?.length > 0 && (
               <R d={0.06}>
                 <div className="rounded-3xl overflow-hidden" style={{ background: "#111f13", border: "1px solid rgba(255,255,255,.07)" }}>
-                  {/* Header */}
                   <div className="px-6 sm:px-8 py-5 flex items-center gap-4"
                     style={{ background: "linear-gradient(135deg,rgba(250,204,21,.12),rgba(250,204,21,.04))", borderBottom: "1px solid rgba(250,204,21,.12)" }}>
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(250,204,21,.15)" }}>
@@ -349,21 +395,16 @@ export default function TourDetails() {
                     </div>
                   </div>
 
-                  {/* Days */}
                   {t.itinerary.map((d, i) => {
                     const open = day === i;
                     return (
                       <div key={i} style={{ borderBottom: i < t.itinerary.length - 1 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
                         <button onClick={() => setDay(open ? null : i)}
                           className="w-full flex items-center gap-4 px-5 sm:px-8 py-4 text-left transition-all"
-                          style={{ background: open ? "rgba(250,204,21,.05)" : "transparent" }}
-                          onMouseEnter={e => { if (!open) e.currentTarget.style.background = "rgba(255,255,255,.025)"; }}
-                          onMouseLeave={e => { if (!open) e.currentTarget.style.background = "transparent"; }}>
-
-                          {/* Day badge */}
-                          <div className="w-13 h-13 rounded-2xl flex-shrink-0 flex flex-col items-center justify-center"
+                          style={{ background: open ? "rgba(250,204,21,.05)" : "transparent" }}>
+                          <div className="flex-shrink-0 flex flex-col items-center justify-center"
                             style={{
-                              width: 52, height: 52,
+                              width: 52, height: 52, borderRadius: 16,
                               background: open ? `linear-gradient(135deg, ${accent}, ${accent}bb)` : "rgba(255,255,255,.06)",
                               boxShadow: open ? `0 6px 20px ${accent}40` : "none",
                               transition: "all .35s ease",
@@ -371,18 +412,14 @@ export default function TourDetails() {
                             <span style={{ fontFamily: sans, fontSize: 9, textTransform: "uppercase", letterSpacing: ".1em", color: open ? "#0b1a0e" : "rgba(255,255,255,.4)", lineHeight: 1 }}>Day</span>
                             <span style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: open ? "#0b1a0e" : "white", lineHeight: 1.1 }}>{d.day}</span>
                           </div>
-
                           <div className="flex-1 min-w-0">
                             <p style={{ fontFamily: serif, fontSize: "clamp(.95rem,2vw,1.15rem)", color: "white", fontWeight: 700, lineHeight: 1.2 }}>{d.loc}</p>
                             {!open && <p style={{ fontFamily: sans, fontSize: 12, color: "rgba(255,255,255,.35)", marginTop: 3 }} className="truncate">{d.act}</p>}
                           </div>
-
                           <div style={{ flexShrink: 0, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform .35s ease" }}>
                             <Icon id="chevron" size={16} color={open ? accent : "rgba(255,255,255,.3)"} />
                           </div>
                         </button>
-
-                        {/* Expanded */}
                         <div style={{ maxHeight: open ? 250 : 0, overflow: "hidden", transition: "max-height .45s cubic-bezier(.16,1,.3,1)" }}>
                           <div className="px-5 sm:px-8 pb-5" style={{ paddingLeft: "calc(1.25rem + 52px + 16px)" }}>
                             <div className="p-4 rounded-2xl" style={{ background: "rgba(255,255,255,.04)", borderLeft: `3px solid ${accent}` }}>
@@ -402,8 +439,7 @@ export default function TourDetails() {
               <R d={0.1}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {t.inclusions && (
-                    <div className="rounded-3xl p-5 sm:p-6"
-                      style={{ background: "linear-gradient(145deg,#0d2b14,#103520)", border: "1.5px solid rgba(74,222,128,.18)" }}>
+                    <div className="rounded-3xl p-5 sm:p-6" style={{ background: "linear-gradient(145deg,#0d2b14,#103520)", border: "1.5px solid rgba(74,222,128,.18)" }}>
                       <div className="flex items-center gap-2.5 mb-5">
                         <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "rgba(74,222,128,.15)" }}>
                           <Icon id="check" size={15} color="#4ade80" />
@@ -423,8 +459,7 @@ export default function TourDetails() {
                     </div>
                   )}
                   {t.exclusions && (
-                    <div className="rounded-3xl p-5 sm:p-6"
-                      style={{ background: "#111f13", border: "1.5px solid rgba(255,255,255,.07)" }}>
+                    <div className="rounded-3xl p-5 sm:p-6" style={{ background: "#111f13", border: "1.5px solid rgba(255,255,255,.07)" }}>
                       <div className="flex items-center gap-2.5 mb-5">
                         <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "rgba(248,113,113,.12)" }}>
                           <Icon id="close" size={15} color="#f87171" />
@@ -449,10 +484,8 @@ export default function TourDetails() {
 
             {/* How to book */}
             <R d={0.12}>
-              <div className="rounded-3xl p-6 sm:p-8 relative overflow-hidden"
-                style={{ background: "linear-gradient(145deg,#0f2b14,#0b3a1e)", border: "1px solid rgba(250,204,21,.12)" }}>
-                <div className="absolute top-0 right-0 w-48 h-48 opacity-5 pointer-events-none"
-                  style={{ background: `radial-gradient(circle, ${accent}, transparent 70%)`, transform: "translate(30%,-30%)" }} />
+              <div className="rounded-3xl p-6 sm:p-8 relative overflow-hidden" style={{ background: "linear-gradient(145deg,#0f2b14,#0b3a1e)", border: "1px solid rgba(250,204,21,.12)" }}>
+                <div className="absolute top-0 right-0 w-48 h-48 opacity-5 pointer-events-none" style={{ background: `radial-gradient(circle, ${accent}, transparent 70%)`, transform: "translate(30%,-30%)" }} />
                 <h3 style={{ fontFamily: serif, fontSize: "clamp(1.3rem,2.5vw,1.8rem)", color: "white", fontWeight: 700, marginBottom: 24 }}>How to book</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {[
@@ -460,8 +493,7 @@ export default function TourDetails() {
                     { n: "02", title: "Get your quote", body: "We craft a detailed itinerary with a transparent price breakdown.",       icon: "map"   },
                     { n: "03", title: "Travel & enjoy", body: "We handle everything — you arrive and explore Madagascar stress-free.",   icon: "users" },
                   ].map((s, i) => (
-                    <div key={i} className="p-4 rounded-2xl relative"
-                      style={{ background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.07)" }}>
+                    <div key={i} className="p-4 rounded-2xl relative" style={{ background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.07)" }}>
                       <span style={{ fontFamily: serif, fontSize: 42, fontWeight: 700, color: accent, opacity: .18, lineHeight: 1, display: "block", marginBottom: 8 }}>{s.n}</span>
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: `${accent}18` }}>
                         <Icon id={s.icon} size={16} color={accent} />
@@ -475,31 +507,21 @@ export default function TourDetails() {
             </R>
           </div>
 
-          {/* ── RIGHT sticky sidebar 4 cols — desktop only ──── */}
+          {/* RIGHT sidebar */}
           <div className="lg:col-span-4 hidden lg:block">
             <div className="sticky top-6 flex flex-col gap-4">
-
-              {/* Price card */}
               <R d={0.15}>
                 <div className="rounded-3xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,.08)", boxShadow: "0 20px 60px rgba(0,0,0,.4)" }}>
-
-                  {/* Price header */}
-                  <div className="px-6 py-6 relative overflow-hidden"
-                    style={{ background: "linear-gradient(135deg,#0a2410,#135c2c)" }}>
-                    <div className="absolute inset-0 opacity-[.07]"
-                      style={{ backgroundImage: "radial-gradient(circle at 80% 20%, white 0%, transparent 55%)" }} />
+                  <div className="px-6 py-6 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#0a2410,#135c2c)" }}>
+                    <div className="absolute inset-0 opacity-[.07]" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, white 0%, transparent 55%)" }} />
                     <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.35)", textTransform: "uppercase", letterSpacing: ".35em", marginBottom: 6 }}>Starting from</p>
                     <p style={{ fontFamily: serif, fontSize: "2.6rem", color: accent, fontWeight: 700, lineHeight: 1 }}>{price0}</p>
                     <p style={{ fontFamily: sans, fontSize: 11, color: "rgba(255,255,255,.3)", marginTop: 6 }}>per person · varies by group</p>
-
-                    {/* Mini star row */}
                     <div className="flex items-center gap-1 mt-4">
                       {[...Array(5)].map((_, i) => <Icon key={i} id="star" size={12} color={i < t.rating ? "#fbbf24" : "rgba(255,255,255,.15)"} />)}
                       <span style={{ fontFamily: sans, fontSize: 11, color: "rgba(255,255,255,.35)", marginLeft: 6 }}>{t.rating}.0 / 5</span>
                     </div>
                   </div>
-
-                  {/* Pricing options */}
                   <div className="p-4" style={{ background: "#111f13" }}>
                     <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.3)", textTransform: "uppercase", letterSpacing: ".2em", marginBottom: 12 }}>All options</p>
                     <div className="flex flex-col gap-2">
@@ -516,8 +538,6 @@ export default function TourDetails() {
                         );
                       })}
                     </div>
-
-                    {/* CTA */}
                     <button onClick={() => wa(`Hello KiriTour! I'd like to book: ${t.title} (${t.duration})`)}
                       className="w-full flex items-center justify-center gap-2.5 mt-4 rounded-2xl font-bold transition-all hover:scale-[1.02] hover:shadow-2xl active:scale-[.98]"
                       style={{ padding: "16px 24px", background: `linear-gradient(135deg,${accent},#f59e0b)`, color: "#0b1a0e", fontFamily: sans, fontSize: 15, boxShadow: `0 8px 28px ${accent}45` }}>
@@ -526,35 +546,29 @@ export default function TourDetails() {
                     <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.25)", textAlign: "center", marginTop: 10 }}>
                       Reply within 2h · Custom itineraries available
                     </p>
-                    <p style={{ fontFamily: sans, fontSize: 20, color: "rgba(255,255,255,.18)", textAlign: "center", marginTop: 4 }}>
-                      Price varies depending on group size.
-                    </p>
                   </div>
                 </div>
               </R>
 
-              {/* Share */}
               <R d={0.18}>
                 <button onClick={copy}
                   className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[.98]"
                   style={{ background: ok ? "rgba(74,222,128,.1)" : "rgba(255,255,255,.05)", border: `1.5px solid ${ok ? "rgba(74,222,128,.3)" : "rgba(255,255,255,.08)"}` }}>
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: ok ? "rgba(74,222,128,.15)" : "rgba(255,255,255,.06)" }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: ok ? "rgba(74,222,128,.15)" : "rgba(255,255,255,.06)" }}>
                     <Icon id="share" size={16} color={ok ? "#4ade80" : "rgba(255,255,255,.4)"} />
                   </div>
                   <div className="text-left">
                     <p style={{ fontFamily: sans, fontSize: 13, color: "white", fontWeight: 600 }}>{ok ? "Link copied!" : "Share this tour"}</p>
-                    <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.3)" }}>Unique UUID link</p>
+                    <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.3)" }}>Shareable link</p>
                   </div>
                 </button>
               </R>
 
-              {/* Help */}
               <R d={0.2}>
                 <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.06)" }}>
                   <p style={{ fontFamily: sans, fontSize: 10, color: "rgba(255,255,255,.3)", textTransform: "uppercase", letterSpacing: ".15em", marginBottom: 12 }}>Need help choosing?</p>
                   <button onClick={() => wa("Hello! I need help choosing the right tour.")}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm transition-all hover:bg-opacity-100"
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition-all"
                     style={{ background: "rgba(74,222,128,.08)", border: "1.5px solid rgba(74,222,128,.2)", color: "#4ade80", fontFamily: sans, fontSize: 13 }}>
                     <Icon id="wa" size={15} color="#4ade80" /> Chat with our team
                   </button>
@@ -565,23 +579,14 @@ export default function TourDetails() {
         </div>
       </div>
 
-      {/* ══ MOBILE STICKY BAR ════════════════════════════════════ */}
+      {/* MOBILE STICKY BAR */}
       <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
         style={{ background: "rgba(11,26,14,.97)", backdropFilter: "blur(20px)", borderTop: `1px solid ${accent}25`, paddingBottom: "env(safe-area-inset-bottom)" }}>
         <div className="px-4 pt-2.5 pb-2 max-w-lg mx-auto">
           <div className="flex items-center gap-3">
             <div className="flex-1 min-w-0">
               <p style={{ fontFamily: sans, fontSize: 9, color: "rgba(255,255,255,.3)", textTransform: "uppercase", letterSpacing: ".25em" }}>From</p>
-              <p style={{
-                fontFamily: serif,
-                fontSize: "clamp(.95rem, 3.5vw, 1.35rem)",
-                color: accent,
-                fontWeight: 700,
-                lineHeight: 1.1,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}>{price0}</p>
+              <p style={{ fontFamily: serif, fontSize: "clamp(.95rem, 3.5vw, 1.35rem)", color: accent, fontWeight: 700, lineHeight: 1.1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{price0}</p>
             </div>
             <button onClick={() => wa(`Hello KiriTour! I'd like to book: ${t.title} (${t.duration})`)}
               className="flex items-center gap-2 rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 flex-shrink-0"
@@ -595,16 +600,9 @@ export default function TourDetails() {
         </div>
       </div>
 
-      {/* ── CSS animations ── */}
       <style>{`
-        @keyframes hero-kb {
-          from { transform: scale(1.08); }
-          to   { transform: scale(1); }
-        }
-        @keyframes scroll-cue {
-          0%,100% { transform: translateY(-100%); }
-          50%      { transform: translateY(200%); }
-        }
+        @keyframes hero-kb { from { transform: scale(1.08); } to { transform: scale(1); } }
+        @keyframes scroll-cue { 0%,100% { transform: translateY(-100%); } 50% { transform: translateY(200%); } }
       `}</style>
     </div>
   );

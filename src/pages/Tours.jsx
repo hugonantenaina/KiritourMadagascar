@@ -29,9 +29,7 @@ const categories = [
 ];
 
 /* ══════════════════════════════════════════════════════════════
-   UUID MAP — chaque tour a un UUID fixe et permanent
-   Format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-   URL résultante: /tours/bf406213-f18d-465b-8ecc-e605c9a42a4b
+   UUID MAP — backwards compatibility (link taloha mbola miasa)
 ══════════════════════════════════════════════════════════════ */
 export const TOUR_UUID_MAP = {
   "tsiribihina-3d":      "a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c4d5",
@@ -50,9 +48,33 @@ export const TOUR_UUID_MAP = {
   "western-1d":          "b4c5d6e7-f8a9-4b0c-1d2e-f3a4b5c6d7e8",
 };
 
-/* UUID → tour id (reverse lookup) */
 export const UUID_TO_TOUR_ID = Object.fromEntries(
   Object.entries(TOUR_UUID_MAP).map(([tourId, uuid]) => [uuid, tourId])
+);
+
+/* ══════════════════════════════════════════════════════════════
+   SLUG SEO MAP — URL mazava ho an'i Google (keyword-rich)
+   /tours/tsingy-de-bemaraha-4-day-unesco-kirindy-baobabs
+══════════════════════════════════════════════════════════════ */
+export const TOUR_SLUG_MAP = {
+  "tsiribihina-3d":     "tsiribihina-river-3-day-pirogue-descent-madagascar",
+  "tsiribihina-4d":     "tsiribihina-river-kirindy-forest-4-day-tour",
+  "tsiribihina-5d":     "western-madagascar-5-day-circuit-baobabs-kirindy",
+  "tsiribihina-6d":     "tsiribihina-tsingy-bemaraha-6-day-tour-madagascar",
+  "tsiribihina-8d":     "menabe-grand-tour-8-day-madagascar-adventure",
+  "andasibe-3d":        "andasibe-rainforest-indri-lemurs-3-day-tour",
+  "andasibe-4d":        "andasibe-lemurs-mantadia-4-day-wildlife-tour",
+  "andasibe-5d":        "andasibe-rainforest-5-day-immersion-madagascar",
+  "andasibe-palmarium": "andasibe-palmarium-aye-aye-5-day-madagascar",
+  "tsingy-4d":          "tsingy-de-bemaraha-4-day-unesco-kirindy-baobabs",
+  "tsingy-3d":          "tsingy-de-bemaraha-3-day-express-circuit-madagascar",
+  "kirindy-2d":         "kirindy-forest-fossa-lemurs-2-day-safari",
+  "kirindy-1d":         "kirindy-forest-1-day-tour-from-morondava",
+  "western-1d":         "avenue-baobabs-betania-kimony-day-tour-morondava",
+};
+
+export const SLUG_TO_TOUR_ID = Object.fromEntries(
+  Object.entries(TOUR_SLUG_MAP).map(([tourId, slug]) => [slug, tourId])
 );
 
 export const tours = [
@@ -510,31 +532,26 @@ Kind regards`;
   const onBlur  = e => e.target.style.borderColor = "transparent";
 
   return (
-    <div className="rounded-3xl p-8 md:p-10" style={{ background: "rgba(255,255,255,0.05)", border: "1.5px solid rgba(250,204,21,0.2)", backdropFilter: "blur(12px)" }}>
+    <div className="rounded-3xl p-6 md:p-10" style={{ background: "rgba(255,255,255,0.05)", border: "1.5px solid rgba(250,204,21,0.2)", backdropFilter: "blur(12px)" }}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        {/* Name */}
         <input type="text" placeholder="Your name" value={form.name}
           onChange={e => update("name", e.target.value)}
           className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none"
           style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
-        {/* Dates */}
         <input type="text" placeholder="Travel dates (e.g. July 10–20)" value={form.dates}
           onChange={e => update("dates", e.target.value)}
           className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none"
           style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
-        {/* Group */}
         <input type="text" placeholder="Group size (e.g. 2 adults)" value={form.group}
           onChange={e => update("group", e.target.value)}
           className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none"
           style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
-        {/* Budget */}
         <input type="text" placeholder="Budget per person (e.g. €500)" value={form.budget}
           onChange={e => update("budget", e.target.value)}
           className="w-full px-4 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-400 outline-none"
           style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
       </div>
 
-      {/* Interests */}
       <textarea
         placeholder="What do you want to see and do? (e.g. Tsingy + baobabs at sunset + fossa spotting + beach + local culture...)"
         value={form.interests}
@@ -544,14 +561,12 @@ Kind regards`;
         style={inputStyle} onFocus={onFocus} onBlur={onBlur}
       />
 
-      {/* Error */}
       {err && (
         <p className="text-red-400 text-xs mb-3 flex items-center gap-1.5" style={{ fontFamily: sans }}>
           <span>⚠️</span> {err}
         </p>
       )}
 
-      {/* Success */}
       {sent && (
         <div className="mb-4 px-4 py-3 rounded-xl text-sm font-semibold text-center"
           style={{ background: "rgba(52,211,153,0.15)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)", fontFamily: sans }}>
@@ -559,7 +574,6 @@ Kind regards`;
         </div>
       )}
 
-      {/* Buttons */}
       <div className="flex flex-col sm:flex-row gap-3">
         <button onClick={sendWA}
           className="flex-1 flex items-center justify-center gap-2.5 py-4 rounded-2xl font-black text-green-900 text-sm hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl"
@@ -585,7 +599,7 @@ Kind regards`;
 }
 
 /* ══ TOUR CARD ════════════════════════════════════════════════════ */
-function TourCard({ tour, onOpen }) {
+function TourCard({ tour }) {
   const [ci, setCi] = useState(0);
   const navigate = useNavigate();
 
@@ -599,10 +613,11 @@ function TourCard({ tour, onOpen }) {
   const lastItem   = tour.pricing?.[tour.pricing.length - 1];
   const lastPrice  = lastItem?.price || lastItem?.range || "";
 
+  /* ✅ SEO slug navigation */
   const handleDetails = (e) => {
     e?.stopPropagation();
-    const uuid = TOUR_UUID_MAP[tour.id];
-    navigate(`/tours/${uuid}`);
+    const slug = TOUR_SLUG_MAP[tour.id];
+    navigate(`/tours/${slug}`);
   };
 
   return (
@@ -613,7 +628,9 @@ function TourCard({ tour, onOpen }) {
       <div className="relative h-52 overflow-hidden flex-shrink-0">
         <img
           src={tour.images[ci]}
-          alt={tour.title}
+          alt={`${tour.title} — ${tour.duration} Madagascar tour`}
+          width="400" height="208"
+          loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           onError={(e) => { e.target.src = "https://i.ibb.co/5xXLDSZQ/20250729-173834.jpg"; }}
         />
@@ -627,8 +644,10 @@ function TourCard({ tour, onOpen }) {
         {tour.images.length > 1 && (
           <>
             <button onClick={(e) => { e.stopPropagation(); setCi((i) => (i - 1 + tour.images.length) % tour.images.length); }}
+              aria-label="Previous image"
               className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/40 hover:bg-slate-900/70 text-amber-300 flex items-center justify-center text-base transition-all">‹</button>
             <button onClick={(e) => { e.stopPropagation(); setCi((i) => (i + 1) % tour.images.length); }}
+              aria-label="Next image"
               className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/40 hover:bg-slate-900/70 text-amber-300 flex items-center justify-center text-base transition-all">›</button>
           </>
         )}
@@ -684,6 +703,14 @@ export default function Tours() {
   const [cat, setCat] = useState("all");
   const filtered = cat === "all" ? tours : tours.filter((t) => t.category === cat);
 
+  /* ── SEO ── */
+  useEffect(() => {
+    document.title = "Madagascar Tours & Safaris — 14 Packages | KiriTour Madagascar";
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) { meta = document.createElement("meta"); meta.name = "description"; document.head.appendChild(meta); }
+    meta.content = "Discover 14 Madagascar tours: Avenue of the Baobabs, Tsingy de Bemaraha UNESCO, Kirindy Forest fossa safari, Tsiribihina River. Private guides from Morondava. From €145.";
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ background: "#f5f7fb", fontFamily: sans }}>
 
@@ -694,7 +721,7 @@ export default function Tours() {
           <span className="inline-block px-4 py-1.5 rounded-full text-emerald-900 text-xs font-bold tracking-widest uppercase border border-emerald-100/80 mb-6" style={{ background: "rgba(236,252,203,0.9)", fontFamily: sans }}>
             🌴 Menabe · Madagascar
           </span>
-          <h1 className="text-white font-black leading-none mb-5" style={{ fontFamily: serif, fontSize: "clamp(2.6rem,6vw,4.6rem)", letterSpacing: "-0.03em" }}>
+          <h1 className="text-white font-black leading-none mb-5" style={{ fontFamily: serif, fontSize: "clamp(2.4rem,6vw,4.6rem)", letterSpacing: "-0.03em" }}>
             Discover Our<br />
             <em style={{ color: "#fde68a" }}>Signature Adventures</em>
           </h1>
@@ -728,7 +755,7 @@ export default function Tours() {
           <div className="flex flex-wrap gap-2 justify-center mb-10">
             {categories.map((c) => (
               <button key={c.id} onClick={() => setCat(c.id)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${cat === c.id ? "scale-105 text-emerald-900 shadow-md" : "text-slate-600 border border-slate-200 hover:border-amber-300"}`}
+                className={`px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all ${cat === c.id ? "scale-105 text-emerald-900 shadow-md" : "text-slate-600 border border-slate-200 hover:border-amber-300"}`}
                 style={{ background: cat === c.id ? "#facc15" : "#ffffff", fontFamily: sans }}>
                 {c.emoji} {c.label} ({c.count})
               </button>
@@ -737,21 +764,21 @@ export default function Tours() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((t) => (
-              <TourCard key={t.id} tour={t} onOpen={() => {}} />
+              <TourCard key={t.id} tour={t} />
             ))}
           </div>
         </div>
       </section>
 
       {/* CUSTOM TOUR FORM */}
-      <section className="py-20 px-4" style={{ background: "linear-gradient(135deg,#020d06 0%,#071a0e 40%,#0a2415 100%)" }}>
+      <section className="py-16 md:py-20 px-4" style={{ background: "linear-gradient(135deg,#020d06 0%,#071a0e 40%,#0a2415 100%)" }}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 text-xs font-bold tracking-widest uppercase"
               style={{ background: "rgba(250,204,21,0.12)", border: "1px solid rgba(250,204,21,0.3)", color: "#facc15", fontFamily: sans }}>
               ✨ 100% Customizable
             </div>
-            <h2 className="text-white font-black leading-tight mb-3" style={{ fontFamily: serif, fontSize: "clamp(1.8rem,4vw,3rem)" }}>
+            <h2 className="text-white font-black leading-tight mb-3" style={{ fontFamily: serif, fontSize: "clamp(1.6rem,4vw,3rem)" }}>
               Don't see your perfect tour?<br />
               <em style={{ color: "#facc15" }}>Design it yourself.</em>
             </h2>
@@ -766,9 +793,9 @@ export default function Tours() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-20 px-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#0f766e 0%,#0369a1 45%,#1d4ed8 100%)" }}>
+      <section className="py-16 md:py-20 px-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#0f766e 0%,#0369a1 45%,#1d4ed8 100%)" }}>
         <div className="relative z-10 max-w-3xl mx-auto text-center text-white">
-          <h2 className="font-black leading-none mb-5" style={{ fontFamily: serif, fontSize: "clamp(2rem,5vw,3.5rem)" }}>
+          <h2 className="font-black leading-none mb-5" style={{ fontFamily: serif, fontSize: "clamp(1.8rem,5vw,3.5rem)" }}>
             Your Perfect Tour<br />
             <em style={{ color: "#fde68a" }}>Starts with one message.</em>
           </h2>
@@ -776,7 +803,7 @@ export default function Tours() {
             Tell us your travel dates and interests, and we will design a western Madagascar itinerary just for you.
           </p>
           <button onClick={() => wa("Hello! I'd like to plan my tour with you.")}
-            className="px-10 py-5 rounded-full font-black text-emerald-900 text-lg hover:scale-105 transition-all"
+            className="px-8 md:px-10 py-4 md:py-5 rounded-full font-black text-emerald-900 text-base md:text-lg hover:scale-105 transition-all"
             style={{ background: "linear-gradient(135deg,#facc15,#fbbf24,#f59e0b)", boxShadow: "0 0 40px rgba(250,204,21,0.45)", fontFamily: sans }}>
             📲 Plan via WhatsApp
           </button>
