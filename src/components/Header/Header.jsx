@@ -8,6 +8,7 @@ import {
   FaFileContract,
   FaShieldAlt,
   FaClipboardList,
+  FaBlog,
 } from "react-icons/fa";
 
 /* ════════════════════════════════════════════════════════════
@@ -150,6 +151,9 @@ const Header = () => {
             </Link>
             <Link to="/about"   className={lnkCls("/about")}>
               <FaImage   size={11} className="opacity-60 flex-shrink-0" /> Gallery <Underline path="/about" />
+            </Link>
+            <Link to="/blog"    className={lnkCls("/blog")}>
+              <FaBlog    size={11} className="opacity-60 flex-shrink-0" /> Blog    <Underline path="/blog" />
             </Link>
 
             {/* Scroll buttons */}
@@ -299,6 +303,7 @@ const Header = () => {
             { to: "/home",    icon: <FaHome />,           label: "Home"    },
             { to: "/tours",   icon: <FaCompass />,        label: "Tours"   },
             { to: "/about",   icon: <FaImage />,          label: "Gallery" },
+            { to: "/blog",    icon: <FaBlog />,           label: "Blog"    },
             { to: "/contact", icon: <FaEnvelope />,       label: "Contact" },
             { to: "/faq",     icon: <FaQuestionCircle />, label: "FAQ"     },
             { to: "/privacy",            icon: <FaShieldAlt />,     label: "Privacy Policy"     },
