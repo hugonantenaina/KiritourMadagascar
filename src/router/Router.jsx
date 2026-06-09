@@ -18,6 +18,8 @@ import FAQ from '../pages/FAQ'
 import TermsPage from '../pages/TermsPage'
 import PrivacyPage from '../pages/PrivacyPage'
 import BookingConditionsPage from '../pages/BookingConditionsPage'
+import Blog from '../pages/Blog'
+import BlogPost from '../pages/BlogPost'
 
 const Router = () => {
   return (
@@ -41,6 +43,8 @@ const Router = () => {
         <Route path='/terms' element={<TermsPage />} />
         <Route path='/privacy' element={<PrivacyPage />} />
         <Route path='/booking-conditions' element={<BookingConditionsPage />} />
+        <Route path='/blog' element={<Blog />} />
+        <Route path='/blog/:slug' element={<BlogPost />} />
     </Routes>
   )
 }
