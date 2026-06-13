@@ -105,7 +105,7 @@ const Header = () => {
     <>
       {/* ══ NAVBAR ═══════════════════════════════════════════ */}
       <header
-        className="sticky top-0 z-50 transition-all duration-400"
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-400"
         style={{
           background: scrolled
             ? "linear-gradient(135deg,#0d3318 0%,#14532d 50%,#0d3318 100%)"
@@ -246,6 +246,9 @@ const Header = () => {
         <div className="h-px w-full"
           style={{ background: "linear-gradient(90deg,transparent,rgba(74,222,128,.25),transparent)" }} />
       </header>
+
+      {/* ══ SPACER — manery ny contenu hidina ambanin'ny fixed header ══ */}
+      <div aria-hidden="true" style={{ height: 65 }} />
 
       {/* ══ OVERLAY ══ */}
       <div onClick={close}
