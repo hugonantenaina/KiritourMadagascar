@@ -1,5 +1,5 @@
 import React from 'react'
-import { hydrateRoot, createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
@@ -9,8 +9,10 @@ import { AuthContextProvider } from './context/AuthContext'
 import ScrollToTop from './components/ScrollToTop'
 import OneSignal from 'react-onesignal';
 
+const isPrerender = typeof navigator !== "undefined" && navigator.userAgent.includes("ReactSnap");
+
 // ── OneSignal Init (browser only — skip during prerender) ──
-if (typeof window !== "undefined" && !navigator.userAgent.includes("ReactSnap")) {
+if (typeof window !== "undefined" && !isPrerender) {
   OneSignal.init({
     appId: "490c17ae-8d20-494a-9afe-4747ba00c693",
     serviceWorkerParam: { scope: "/" },
@@ -52,9 +54,10 @@ const app = (
 
 const rootElement = document.getElementById('root');
 
-// react-snap prerendered HTML → hydrate; otherwise normal render
+/* Prerendered HTML exists → clear it, then render fresh (no hydration mismatch).
+   The prerendered HTML still served raw HTML to Google for SEO; the browser
+   simply re-renders cleanly on top. */
 if (rootElement.hasChildNodes()) {
-  hydrateRoot(rootElement, app);
-} else {
-  createRoot(rootElement).render(app);
+  rootElement.innerHTML = "";
 }
+createRoot(rootElement).render(app);
