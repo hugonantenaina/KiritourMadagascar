@@ -1,7 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   PRERENDER — manao HTML statique isaky ny route
-   Mampiasa puppeteer VAOVAO (mahay code modern: ?. ?? ...)
-   Mandeha automatique aorian'ny "vite build" (postbuild)
+   PRERENDER v2 — timeout ambony + retry + nanampy /tsingy-3d
 ══════════════════════════════════════════════════════════════ */
 import http from "http";
 import fs from "fs";
@@ -11,7 +9,7 @@ import puppeteer from "puppeteer";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "dist");
-const PORT = 45678;
+const PORT = 45679;
 
 const routes = [
   "/",
@@ -51,7 +49,6 @@ const MIME = {
   ".txt": "text/plain", ".xml": "application/xml",
 };
 
-/* ── Static server with SPA fallback ── */
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent(req.url.split("?")[0]);
   const filePath = path.join(DIST, urlPath);
@@ -65,47 +62,85 @@ const server = http.createServer((req, res) => {
   }
 });
 
+async function renderRoute(page, route) {
+  await page.goto(`http://localhost:${PORT}${route}`, {
+    waitUntil: "networkidle2",
+    timeout: 60000,
+  });
+  // Miandry React render ao anatin'ny #root
+  await page.waitForFunction(
+    () => {
+      const r = document.getElementById("root");
+      return r && r.children.length > 0;
+    },
+    { timeout: 30000 }
+  ).catch(() => {});
+  // Fotoana fanampiny ho an'ny SEO useEffect
+  await new Promise((r) => setTimeout(r, 1000));
+  return await page.content();
+}
+
 async function run() {
   await new Promise((r) => server.listen(PORT, r));
   console.log(`\n🌐 static server on http://localhost:${PORT}`);
 
   const browser = await puppeteer.launch({
     headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-web-security",
+    ],
   });
 
   let ok = 0;
+  const failed = [];
+
   for (const route of routes) {
     const page = await browser.newPage();
-    await page.setUserAgent("ReactSnap"); // skip OneSignal init
-    try {
-      await page.goto(`http://localhost:${PORT}${route}`, {
-        waitUntil: "networkidle2",
-        timeout: 45000,
-      });
-      // wait for React to render content into #root
-      await page.waitForFunction(
-        () => { const r = document.getElementById("root"); return r && r.children.length > 0; },
-        { timeout: 20000 }
-      ).catch(() => {});
-      await new Promise((r) => setTimeout(r, 600)); // let SEO useEffect run
+    await page.setUserAgent("ReactSnap");
+    // Sabotraka ny Firebase auth state listener
+    await page.evaluateOnNewDocument(() => {
+      window.__PRERENDER__ = true;
+    });
 
-      const html = await page.content();
+    let html = null;
+    // Andramo 2 mandeha raha misy olana
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        html = await renderRoute(page, route);
+        break;
+      } catch (e) {
+        if (attempt === 2) {
+          console.log(`✗ ${route} — ${e.message.slice(0, 60)}`);
+          failed.push(route);
+        } else {
+          console.log(`  ↻ retry ${route}`);
+          await new Promise((r) => setTimeout(r, 2000));
+        }
+      }
+    }
 
+    if (html) {
       const outDir = route === "/" ? DIST : path.join(DIST, route);
       fs.mkdirSync(outDir, { recursive: true });
       fs.writeFileSync(path.join(outDir, "index.html"), html);
       console.log(`✓ ${route}`);
       ok++;
-    } catch (e) {
-      console.log(`✗ ${route} — ${e.message}`);
     }
+
     await page.close();
   }
 
   await browser.close();
   server.close();
-  console.log(`\n✅ Prerendered ${ok}/${routes.length} pages\n`);
+
+  console.log(`\n✅ Prerendered ${ok}/${routes.length} pages`);
+  if (failed.length) {
+    console.log(`⚠️  Failed (${failed.length}): ${failed.join(", ")}`);
+  }
+  console.log();
 }
 
 run().catch((e) => { console.error(e); process.exit(1); });
