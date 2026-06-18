@@ -87,7 +87,8 @@ export default function TourDetails() {
     if (!t) return;
     const slug  = TOUR_SLUG_MAP[t.id];
     const url   = `https://kiritourmadagascar.com/tours/${slug}`;
-    const price = (t.pricing?.[0]?.price || t.pricing?.[0]?.range || "").replace(/[^0-9]/g, "");
+    const rawPrice = t.pricing?.[0]?.price || t.pricing?.[0]?.range || "";
+    const price = (rawPrice.match(/\d+/) || [""])[0];
     const img0  = t.images?.[0] || "";
     const title = `${t.title} — ${t.duration} Madagascar Tour | KiriTour`;
     const desc  = t.desc.slice(0, 155);
@@ -122,7 +123,7 @@ export default function TourDetails() {
       "name": t.title,
       "description": t.desc,
       "image": t.images,
-      "touristType": "Adventure, Wildlife, Eco-tourism",
+      "touristType": ["Adventure", "Wildlife", "Eco-tourism"],
       "url": url,
       "provider": {
         "@type": "TravelAgency",
@@ -130,7 +131,7 @@ export default function TourDetails() {
         "url": "https://kiritourmadagascar.com",
         "telephone": "+261336640777",
         "areaServed": "Madagascar",
-        "address": { "@type": "PostalAddress", "addressLocality": "Morondava", "addressCountry": "MG" }
+        "address": { "@type": "PostalAddress", "addressLocality": "Morondava", "addressRegion": "Menabe", "addressCountry": "MG" }
       },
       "offers": {
         "@type": "Offer",
@@ -143,7 +144,8 @@ export default function TourDetails() {
         "@type": "AggregateRating",
         "ratingValue": String(t.rating || 5),
         "reviewCount": "8",
-        "bestRating": "5"
+        "bestRating": "5",
+        "worstRating": "1"
       }
     };
     let script = document.getElementById("kt-tour-ld");
