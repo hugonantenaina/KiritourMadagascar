@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { tours, UUID_TO_TOUR_ID, SLUG_TO_TOUR_ID, TOUR_SLUG_MAP } from "./Tours";
 import { getTourFAQ } from "./tourFAQ";
+import { TOUR_TO_BLOG } from "./internalLinks";
+import { POST_BY_SLUG } from "./blogData";
 
 /* ── Google Fonts ─────────────────────────────────────────────── */
 if (typeof document !== "undefined" && !document.getElementById("kt-td-f")) {
@@ -194,6 +196,9 @@ export default function TourDetails() {
 
   const price0 = t.pricing?.[0]?.price || t.pricing?.[0]?.range || "";
   const faqList = getTourFAQ(t);
+  const relatedBlogSlugs = TOUR_TO_BLOG[t.id] || [];
+  const relatedBlogPosts = relatedBlogSlugs.map((slug) => POST_BY_SLUG[slug]).filter(Boolean);
+  const relatedTours = tours.filter((x) => x.category === t.category && x.id !== t.id).slice(0, 3);
 
   const copy = () => {
     navigator.clipboard?.writeText(window.location.href);
@@ -564,6 +569,67 @@ export default function TourDetails() {
                 })}
               </div>
             </R>
+
+            {/* RELATED TOURS — internal linking */}
+            {relatedTours.length > 0 && (
+              <R d={0.16}>
+                <div>
+                  <h3 style={{ fontFamily: serif, fontSize: "clamp(1.2rem,2.5vw,1.6rem)", color: "white", fontWeight: 700, marginBottom: 16 }}>
+                    You might also like
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {relatedTours.map((rt) => {
+                      const rtSlug = TOUR_SLUG_MAP[rt.id];
+                      const rtPrice = rt.pricing?.[0]?.price || rt.pricing?.[0]?.range || "";
+                      return (
+                        <div key={rt.id} onClick={() => navigate(`/tours/${rtSlug}`)}
+                          className="group rounded-2xl overflow-hidden cursor-pointer transition-all hover:-translate-y-1"
+                          style={{ background: "#111f13", border: "1px solid rgba(255,255,255,.07)" }}>
+                          <div className="relative h-28 overflow-hidden">
+                            <img src={rt.images?.[0]} alt={rt.title} width="200" height="112" loading="lazy"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              onError={(e) => { e.target.src = "https://i.ibb.co/5xXLDSZQ/20250729-173834.jpg"; }} />
+                            <div className="absolute inset-0" style={{ background: "linear-gradient(to top,rgba(0,0,0,.5),transparent 60%)" }} />
+                          </div>
+                          <div className="p-3.5">
+                            <p style={{ fontFamily: serif, fontSize: 13, color: "white", fontWeight: 700, lineHeight: 1.3 }} className="line-clamp-2">{rt.title}</p>
+                            <p style={{ fontFamily: sans, fontSize: 11, color: accent, fontWeight: 700, marginTop: 6 }}>{rtPrice}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </R>
+            )}
+
+            {/* FROM OUR BLOG — internal linking to guides */}
+            {relatedBlogPosts.length > 0 && (
+              <R d={0.18}>
+                <div>
+                  <h3 style={{ fontFamily: serif, fontSize: "clamp(1.2rem,2.5vw,1.6rem)", color: "white", fontWeight: 700, marginBottom: 16 }}>
+                    Helpful guides for this trip
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {relatedBlogPosts.map((post) => (
+                      <div key={post.slug} onClick={() => navigate(`/blog/${post.slug}`)}
+                        className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all hover:-translate-y-0.5"
+                        style={{ background: "#111f13", border: "1px solid rgba(255,255,255,.07)" }}>
+                        <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+                          <img src={post.cover} alt={post.title} width="64" height="64" loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => { e.target.src = "https://i.ibb.co/5xXLDSZQ/20250729-173834.jpg"; }} />
+                        </div>
+                        <div className="min-w-0">
+                          <p style={{ fontFamily: sans, fontSize: 10, color: accent, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>{post.category}</p>
+                          <p style={{ fontFamily: serif, fontSize: 14, color: "white", fontWeight: 700, lineHeight: 1.3, marginTop: 2 }} className="line-clamp-2">{post.title}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </R>
+            )}
           </div>
 
           {/* RIGHT sidebar */}
