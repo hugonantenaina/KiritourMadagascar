@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { tours, UUID_TO_TOUR_ID, SLUG_TO_TOUR_ID, TOUR_SLUG_MAP } from "./Tours";
+import { getTourFAQ } from "./tourFAQ";
 
 /* ── Google Fonts ─────────────────────────────────────────────── */
 if (typeof document !== "undefined" && !document.getElementById("kt-td-f")) {
@@ -67,6 +68,7 @@ export default function TourDetails() {
   const [day, setDay] = useState(null);
   const [ok,  setOk]  = useState(false);   // copied
   const [in_, setIn]  = useState(false);   // mounted
+  const [faqOpen, setFaqOpen] = useState(null);
 
   useEffect(() => { window.scrollTo(0, 0); setTimeout(() => setIn(true), 80); }, []);
 
@@ -152,11 +154,28 @@ export default function TourDetails() {
     if (!script) { script = document.createElement("script"); script.id = "kt-tour-ld"; script.type = "application/ld+json"; document.head.appendChild(script); }
     script.textContent = JSON.stringify(ld);
 
+    /* JSON-LD FAQPage — rich snippets in Google search results */
+    const faq = getTourFAQ(t);
+    const faqLd = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faq.map((item) => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": { "@type": "Answer", "text": item.a }
+      }))
+    };
+    let faqScript = document.getElementById("kt-faq-ld");
+    if (!faqScript) { faqScript = document.createElement("script"); faqScript.id = "kt-faq-ld"; faqScript.type = "application/ld+json"; document.head.appendChild(faqScript); }
+    faqScript.textContent = JSON.stringify(faqLd);
+
     /* cleanup on unmount */
     return () => {
       document.title = "KiriTour Madagascar | Tours Baobabs, Tsingy & Wildlife — Morondava";
       const s = document.getElementById("kt-tour-ld");
       if (s) s.remove();
+      const fs = document.getElementById("kt-faq-ld");
+      if (fs) fs.remove();
     };
   }, [t]);
 
@@ -174,6 +193,7 @@ export default function TourDetails() {
   );
 
   const price0 = t.pricing?.[0]?.price || t.pricing?.[0]?.range || "";
+  const faqList = getTourFAQ(t);
 
   const copy = () => {
     navigator.clipboard?.writeText(window.location.href);
@@ -505,6 +525,43 @@ export default function TourDetails() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </R>
+
+            {/* FAQ — accordion + helps with FAQPage rich snippets */}
+            <R d={0.14}>
+              <div className="rounded-3xl overflow-hidden" style={{ background: "#111f13", border: "1px solid rgba(255,255,255,.07)" }}>
+                <div className="px-6 sm:px-8 py-5 flex items-center gap-4"
+                  style={{ background: "linear-gradient(135deg,rgba(74,222,128,.1),rgba(74,222,128,.03))", borderBottom: "1px solid rgba(74,222,128,.12)" }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(74,222,128,.15)" }}>
+                    <span style={{ fontSize: 18 }}>❓</span>
+                  </div>
+                  <div>
+                    <h2 style={{ fontFamily: serif, fontSize: "clamp(1.3rem,2.5vw,1.8rem)", color: "white", fontWeight: 700 }}>Frequently Asked Questions</h2>
+                    <p style={{ fontFamily: sans, fontSize: 11, color: "rgba(255,255,255,.35)", marginTop: 2 }}>Everything you need to know before booking</p>
+                  </div>
+                </div>
+
+                {faqList.map((item, i) => {
+                  const open = faqOpen === i;
+                  return (
+                    <div key={i} style={{ borderBottom: i < faqList.length - 1 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
+                      <button onClick={() => setFaqOpen(open ? null : i)}
+                        className="w-full flex items-center gap-4 px-5 sm:px-8 py-4 text-left transition-all"
+                        style={{ background: open ? "rgba(74,222,128,.05)" : "transparent" }}>
+                        <span className="flex-1 min-w-0" style={{ fontFamily: sans, fontSize: 14, color: "white", fontWeight: 600, lineHeight: 1.4 }}>{item.q}</span>
+                        <div style={{ flexShrink: 0, transform: open ? "rotate(45deg)" : "rotate(0deg)", transition: "transform .3s ease" }}>
+                          <span style={{ color: open ? "#4ade80" : "rgba(255,255,255,.3)", fontSize: 20, fontWeight: 300, lineHeight: 1 }}>+</span>
+                        </div>
+                      </button>
+                      <div style={{ maxHeight: open ? 300 : 0, overflow: "hidden", transition: "max-height .4s cubic-bezier(.16,1,.3,1)" }}>
+                        <div className="px-5 sm:px-8 pb-5">
+                          <p style={{ fontFamily: sans, fontSize: 13, color: "rgba(255,255,255,.55)", lineHeight: 1.7 }}>{item.a}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </R>
           </div>
