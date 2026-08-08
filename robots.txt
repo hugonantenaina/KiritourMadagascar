@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://www.kiritourmadagascar.com/sitemap.xml
+Sitemap: https://kiritourmadagascar.com/sitemap.xml
