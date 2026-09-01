@@ -106,7 +106,7 @@ const whyUs = [
   { emoji: "💬", title: "WhatsApp Booking",      desc: "Real humans, instant response. Confirmation within 2 hours." },
   { emoji: "💎", title: "Transparent Pricing",   desc: "6 package tiers for every budget — fully disclosed." },
   { emoji: "🌿", title: "Eco-Responsible",       desc: "Local communities first. We protect what we share." },
-  { emoji: "⭐", title: "4.4 / 5 Google Rating", desc: "93+ verified travellers. Our reputation speaks for itself." },
+  { emoji: "⭐", title: "4.7 / 5 Google Rating", desc: "112+ verified travellers. Our reputation speaks for itself." },
 ];
 
 const howItWorks = [
@@ -302,7 +302,7 @@ function About() {
               <div className="flex items-center gap-3 rounded-xl px-4 py-3 border border-white/20 backdrop-blur-md" style={{ background: "rgba(255,255,255,.12)" }}>
                 <span className="text-2xl" aria-hidden="true">🏆</span>
                 <div>
-                  <p className="text-white font-bold text-sm" style={{ fontFamily: sans }}>3 years experience · 93+ travellers</p>
+                  <p className="text-white font-bold text-sm" style={{ fontFamily: sans }}>3 years experience · 112+ travellers</p>
                   <div className="flex gap-0.5 mt-0.5" aria-label="5 star rating">
                     {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-xs" aria-hidden="true">★</span>)}
                   </div>
@@ -655,7 +655,7 @@ function CTA() {
           <a href={`https://wa.me/${WA}`} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 hover:text-yellow-400 transition-colors">📱 +261 33 664 07 77</a>
           <span className="flex items-center gap-2">📍 Morondava, Madagascar</span>
-          <span className="flex items-center gap-2">⭐ 4.4/5 · Google Maps</span>
+          <span className="flex items-center gap-2">⭐ 4.7/5 · Google Maps</span>
         </div>
       </Reveal>
     </section>
@@ -663,6 +663,16 @@ function CTA() {
 }
 
 export default function Home() {
+  useEffect(() => {
+    document.title = "KiriTour Madagascar | Tours Baobabs, Tsingy & Wildlife — Morondava";
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) { meta = document.createElement("meta"); meta.name = "description"; document.head.appendChild(meta); }
+    meta.content = "KiriTour Madagascar — Expert eco-tours & safaris in Morondava. Avenue of the Baobabs, Tsingy de Bemaraha UNESCO, Kirindy Forest, lemurs & Tsiribihina River. ⭐4.7/5 · 112+ travellers. Book via WhatsApp!";
+    let canon = document.querySelector('link[rel="canonical"]');
+    if (!canon) { canon = document.createElement("link"); canon.rel = "canonical"; document.head.appendChild(canon); }
+    canon.href = "https://kiritourmadagascar.com/";
+  }, []);
+
   return (
     <>
       <ProgressBar />
